@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+/**
+ * @description Conecta a MongoDB usando la URI de variable de entorno.
+ * @returns {Promise<void>}
+ */
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);

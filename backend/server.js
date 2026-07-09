@@ -14,6 +14,11 @@ app.use(express.json());
 
 connectDB();
 
+/**
+ * @description Siembra los roles por defecto (Administrador, Entrenador, Cliente)
+ *              usando upsert para evitar duplicados.
+ * @returns {Promise<void>}
+ */
 const seedRoles = async () => {
   const roles = ['Administrador', 'Entrenador', 'Cliente'];
   for (const nombre of roles) {
@@ -27,6 +32,11 @@ const seedRoles = async () => {
 };
 seedRoles();
 
+/**
+ * @description Siembra los planes de membresía por defecto
+ *              (Básico, Estándar, Premium, Trimestral, Anual).
+ * @returns {Promise<void>}
+ */
 const seedPlans = async () => {
   const defaultPlans = [
     { nombre: 'Básico', precio: 70000, duracionDias: 30, beneficios: ['Acceso al gimnasio en horario regular', 'Vestidores y regaderas'], descripcion: 'Plan ideal para quienes inician', activo: true },
