@@ -1,8 +1,8 @@
-const User = require('../../models/User');
-const Role = require('../../models/Role');
-const Membership = require('../../models/Membership');
-const Payment = require('../../models/Payment');
-const Attendance = require('../../models/Attendance');
+﻿const User = require('../../models/Usuario');
+const Role = require('../../models/Rol');
+const Membership = require('../../models/Membresia');
+const Payment = require('../../models/Pago');
+const Attendance = require('../../models/Asistencia');
 
 const getReport = async (req, res) => {
   try {
