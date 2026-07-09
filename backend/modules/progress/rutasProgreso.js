@@ -1,6 +1,6 @@
-const express = require('express');
-const { create, getAll, getLast } = require('./progress.controller');
-const { protect } = require('../../middleware/authMiddleware');
+﻿const express = require('express');
+const { create, getAll, getLast } = require('./controladorProgreso');
+const { protect } = require('../../middleware/autenticacionMiddleware');
 
 const router = express.Router();
 
