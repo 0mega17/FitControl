@@ -1,28 +1,28 @@
-const express = require('express');
+﻿const express = require('express');
 const { body } = require('express-validator');
-const { register, login, refreshToken, logout } = require('./auth.controller');
-const { validateFields } = require('../../middleware/validateMiddleware');
-const { protect } = require('../../middleware/authMiddleware');
+const { registrar, iniciarSesion, renovarToken, cerrarSesion } = require('./controladorAuth');
+const { validateFields } = require('../../middleware/validacionMiddleware');
+const { protect } = require('../../middleware/autenticacionMiddleware');
 
 const router = express.Router();
 
-router.post('/register', [
+router.post('/registro', [
   body('email').isEmail().withMessage('Correo electrónico inválido'),
   body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
   validateFields
-], register);
+], registrar);
 
-router.post('/login', [
+router.post('/iniciar-sesion', [
   body('email').isEmail().withMessage('Correo electrónico inválido'),
   body('password').notEmpty().withMessage('La contraseña es requerida'),
   validateFields
-], login);
+], iniciarSesion);
 
-router.post('/refresh-token', [
+router.post('/renovar-token', [
   body('refreshToken').notEmpty().withMessage('Refresh token requerido'),
   validateFields
-], refreshToken);
+], renovarToken);
 
-router.post('/logout', protect, logout);
+router.post('/cerrar-sesion', protect, cerrarSesion);
 
 module.exports = router;

@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');
+﻿const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../../models/User');
-const Role = require('../../models/Role');
-const Client = require('../../models/Client');
-const Trainer = require('../../models/Trainer');
-const RefreshToken = require('../../models/RefreshToken');
-const Membership = require('../../models/Membership');
-const MembershipHistory = require('../../models/MembershipHistory');
-const { createNotification, notifyAllByRole } = require('../../services/notificationService');
+const User = require('../../models/Usuario');
+const Role = require('../../models/Rol');
+const Client = require('../../models/Cliente');
+const Trainer = require('../../models/Entrenador');
+const RefreshToken = require('../../models/TokenRefresco');
+const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
 
 const generarToken = (usuario) => {
   return jwt.sign(
@@ -42,7 +42,7 @@ const formatearUsuario = (usuario, token, refreshToken) => ({
   refreshToken
 });
 
-const register = async (req, res) => {
+const registrar = async (req, res) => {
   try {
     const { nombre, apellido, email, password, objetivo, edad, estatura, peso, experiencia, planId } = req.body;
 
@@ -131,7 +131,7 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const iniciarSesion = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -158,7 +158,7 @@ const login = async (req, res) => {
   }
 };
 
-const refreshToken = async (req, res) => {
+const renovarToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
 
@@ -192,7 +192,7 @@ const refreshToken = async (req, res) => {
   }
 };
 
-const logout = async (req, res) => {
+const cerrarSesion = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
 
@@ -206,4 +206,4 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refreshToken, logout };
+module.exports = { registrar, iniciarSesion, renovarToken, cerrarSesion };

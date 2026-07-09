@@ -1,19 +1,19 @@
-const User = require('../../models/User');
-const Client = require('../../models/Client');
-const Trainer = require('../../models/Trainer');
+﻿const Usuario = require('../../models/Usuario');
+const Cliente = require('../../models/Cliente');
+const Entrenador = require('../../models/Entrenador');
 
-const getProfile = async (req, res) => {
+const obtenerPerfil = async (req, res) => {
   try {
-    const usuario = await User.findById(req.user._id).populate('rol');
+    const usuario = await Usuario.findById(req.user._id).populate('rol');
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
     let perfilExtra = null;
     if (usuario.rol.nombre === 'Cliente') {
-      perfilExtra = await Client.findOne({ usuario: usuario._id });
+      perfilExtra = await Cliente.findOne({ usuario: usuario._id });
     } else if (usuario.rol.nombre === 'Entrenador') {
-      perfilExtra = await Trainer.findOne({ usuario: usuario._id });
+      perfilExtra = await Entrenador.findOne({ usuario: usuario._id });
     }
 
     res.json({ usuario, perfilExtra });
@@ -22,11 +22,11 @@ const getProfile = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const obtenerUsuarios = async (req, res) => {
   try {
     const { rol } = req.query;
     const filter = rol ? { 'rol.nombre': rol } : {};
-    const usuarios = await User.find().populate('rol', 'nombre').select('-password');
+    const usuarios = await Usuario.find().populate('rol', 'nombre').select('-password');
     const filtered = rol ? usuarios.filter(u => u.rol?.nombre === rol) : usuarios;
     res.json(filtered);
   } catch (error) {
@@ -34,10 +34,10 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+const actualizarUsuario = async (req, res) => {
   try {
     const { nombre, apellido, email } = req.body;
-    const usuario = await User.findById(req.params.id);
+    const usuario = await Usuario.findById(req.params.id);
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
 
     if (nombre !== undefined) usuario.nombre = nombre;
@@ -51,9 +51,9 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deactivateUser = async (req, res) => {
+const desactivarUsuario = async (req, res) => {
   try {
-    const usuario = await User.findById(req.params.id);
+    const usuario = await Usuario.findById(req.params.id);
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     usuario.estado = 'inactivo';
     await usuario.save();
@@ -63,9 +63,9 @@ const deactivateUser = async (req, res) => {
   }
 };
 
-const activateUser = async (req, res) => {
+const activarUsuario = async (req, res) => {
   try {
-    const usuario = await User.findById(req.params.id);
+    const usuario = await Usuario.findById(req.params.id);
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     usuario.estado = 'activo';
     await usuario.save();
@@ -75,22 +75,21 @@ const activateUser = async (req, res) => {
   }
 };
 
-const changeUserRole = async (req, res) => {
+const cambiarRol = async (req, res) => {
   try {
     const { rolId } = req.body;
-    const Role = require('../../models/Role');
-    const rol = await Role.findById(rolId);
+    const Rol = require('../../models/Rol');
+    const rol = await Rol.findById(rolId);
     if (!rol) return res.status(404).json({ mensaje: 'Rol no encontrado' });
 
-    const usuario = await User.findById(req.params.id);
+    const usuario = await Usuario.findById(req.params.id);
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
 
     usuario.rol = rol._id;
     await usuario.save();
 
-    // If changing from Cliente, delete Client record
     if (usuario.rol.nombre !== 'Cliente') {
-      await Client.findOneAndDelete({ usuario: usuario._id });
+      await Cliente.findOneAndDelete({ usuario: usuario._id });
     }
 
     res.json({ mensaje: 'Rol actualizado correctamente', usuario });
@@ -99,11 +98,11 @@ const changeUserRole = async (req, res) => {
   }
 };
 
-const updateProfile = async (req, res) => {
+const actualizarPerfil = async (req, res) => {
   try {
     const { nombre, apellido, telefono, fechaNacimiento, direccion, especialidades } = req.body;
 
-    const usuario = await User.findById(req.user._id).populate('rol');
+    const usuario = await Usuario.findById(req.user._id).populate('rol');
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
@@ -113,7 +112,7 @@ const updateProfile = async (req, res) => {
     await usuario.save();
 
     if (usuario.rol.nombre === 'Cliente') {
-      const cliente = await Client.findOne({ usuario: usuario._id });
+      const cliente = await Cliente.findOne({ usuario: usuario._id });
       if (cliente) {
         if (telefono !== undefined) cliente.telefono = telefono;
         if (fechaNacimiento !== undefined) cliente.fechaNacimiento = fechaNacimiento;
@@ -121,7 +120,7 @@ const updateProfile = async (req, res) => {
         await cliente.save();
       }
     } else if (usuario.rol.nombre === 'Entrenador') {
-      const entrenador = await Trainer.findOne({ usuario: usuario._id });
+      const entrenador = await Entrenador.findOne({ usuario: usuario._id });
       if (entrenador) {
         if (telefono !== undefined) entrenador.telefono = telefono;
         if (especialidades !== undefined) entrenador.especialidades = especialidades;
@@ -135,4 +134,4 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { getProfile, updateProfile, getAllUsers, updateUser, deactivateUser, activateUser, changeUserRole };
+module.exports = { obtenerPerfil, actualizarPerfil, obtenerUsuarios, actualizarUsuario, desactivarUsuario, activarUsuario, cambiarRol };
