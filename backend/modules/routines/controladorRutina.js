@@ -1,7 +1,7 @@
-const Routine = require('../../models/Routine');
-const AssignedRoutine = require('../../models/AssignedRoutine');
-const Client = require('../../models/Client');
-const User = require('../../models/User');
+﻿const Routine = require('../../models/Rutina');
+const AssignedRoutine = require('../../models/RutinaAsignada');
+const Client = require('../../models/Cliente');
+const User = require('../../models/Usuario');
 const { createNotification } = require('../../services/notificationService');
 
 const create = async (req, res) => {
