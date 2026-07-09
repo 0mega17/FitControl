@@ -1,5 +1,10 @@
+<<<<<<< HEAD:backend/modules/attendance/attendance.routes.js
 const express = require('express');
 const { generateQR, registerByQR, registerManual, getByClient, getAll } = require('./attendance.controller');
+=======
+﻿const express = require('express');
+const { generateQR, registerByQR, registerManual, getByClient, getAll } = require('./controladorAsistencia');
+>>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/attendance/rutasAsistencia.js
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');
 

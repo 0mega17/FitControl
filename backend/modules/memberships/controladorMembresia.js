@@ -1,8 +1,16 @@
+<<<<<<< HEAD:backend/modules/memberships/membership.controller.js
 const Membership = require('../../models/Membresia');
 const MembershipHistory = require('../../models/HistorialMembresia');
 const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
 const Payment = require('../../models/Pago');
+=======
+﻿const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const Client = require('../../models/Cliente');
+const User = require('../../models/User');
+const Payment = require('../../models/Payment');
+>>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/memberships/controladorMembresia.js
 const Plan = require('../../models/Plan');
 const Settings = require('../../models/Configuracion');
 const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
@@ -85,7 +93,7 @@ const createMembership = async (req, res) => {
 
     res.status(201).json(membresia);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear membresía', error: error.message });
+    res.status(500).json({ mensaje: 'Error al crear membresÃ­a', error: error.message });
   }
 };
 
@@ -96,7 +104,7 @@ const getAll = async (req, res) => {
       .sort({ createdAt: -1 });
     res.json(membresias);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener membresías', error: error.message });
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as', error: error.message });
   }
 };
 
@@ -107,7 +115,7 @@ const getActive = async (req, res) => {
       .sort({ fechaVencimiento: 1 });
     res.json(membresias);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener membresías activas', error: error.message });
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as activas', error: error.message });
   }
 };
 
@@ -118,7 +126,7 @@ const getExpired = async (req, res) => {
       .sort({ fechaVencimiento: -1 });
     res.json(membresias);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener membresías vencidas', error: error.message });
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as vencidas', error: error.message });
   }
 };
 
@@ -147,7 +155,7 @@ const getSemaforo = async (req, res) => {
 
     res.json(resultado);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener semáforo', error: error.message });
+    res.status(500).json({ mensaje: 'Error al obtener semÃ¡foro', error: error.message });
   }
 };
 
