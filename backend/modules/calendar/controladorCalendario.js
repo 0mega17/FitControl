@@ -1,6 +1,6 @@
-const WorkoutCalendar = require('../../models/WorkoutCalendar');
-const Trainer = require('../../models/Trainer');
-const Client = require('../../models/Client');
+﻿const WorkoutCalendar = require('../../models/CalendarioEntrenamiento');
+const Trainer = require('../../models/Entrenador');
+const Client = require('../../models/Cliente');
 
 const create = async (req, res) => {
   try {
