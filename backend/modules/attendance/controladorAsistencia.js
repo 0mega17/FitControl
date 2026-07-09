@@ -1,7 +1,7 @@
-const crypto = require('crypto');
-const Attendance = require('../../models/Attendance');
-const Client = require('../../models/Client');
-const Membership = require('../../models/Membership');
+﻿const crypto = require('crypto');
+const Attendance = require('../../models/Asistencia');
+const Client = require('../../models/Cliente');
+const Membership = require('../../models/Membresia');
 
 const generateQR = async (req, res) => {
   try {
