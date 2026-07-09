@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-09T14:00:00.000Z" agent="FitControl" version="24.0.0">
+  <diagram name="Secuencia: Asistencia QR" id="seq-asistencia-qr">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="DIAGRAMA DE SECUENCIA — Sistema de Asistencia QR" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=17;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="270" y="15" width="520" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- ACTORES -->
+        <mxCell id="a_client" value="Cliente" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="80" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_fe" value="Frontend&#xa;(MyQR.jsx)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="170" y="60" width="100" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_ctrl" value="AttendanceController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="60" width="130" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="a_models" value="Models&#xa;(Attendance,&#xa;Client,&#xa;Membership)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="60" width="100" height="650" as="geometry"/>
+        </mxCell>
+
+        <!-- =============================== -->
+        <!-- FLUJO: GENERAR QR -->
+        <!-- =============================== -->
+        <mxCell id="box1" value="Flujo A: Generar Token QR" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#82b366;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="15" y="105" width="630" height="230" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m1" value="1: Navega a /my-qr" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="145" as="sourcePoint"/>
+            <mxPoint x="220" y="145" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2: Click 'Generar QR'" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="165" as="sourcePoint"/>
+            <mxPoint x="220" y="165" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3: GET /api/attendance/qr" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="190" as="sourcePoint"/>
+            <mxPoint x="405" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="act_ctrl1" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="385" y="185" width="30" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m4" value="4: Client.findOne({usuario: req.user.id})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="215" as="sourcePoint"/>
+            <mxPoint x="580" y="215" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5: Verificar membresía activa" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="235" as="sourcePoint"/>
+            <mxPoint x="580" y="235" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note1" value="Verificar:&#xa;- Membresía existe&#xa;- estado = 'activa'&#xa;- fechaVencimiento > now" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="590" y="210" width="110" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m6" value="6: Generar token aleatorio (uuid + timestamp)" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="260" as="sourcePoint"/>
+            <mxPoint x="390" y="260" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7: {qrToken: 'abc123...', clienteId, expiresAt}" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="285" as="sourcePoint"/>
+            <mxPoint x="220" y="285" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="8: Renderiza token QR en pantalla" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="310" as="sourcePoint"/>
+            <mxPoint x="70" y="310" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- =============================== -->
+        <!-- FLUJO: REGISTRAR ASISTENCIA -->
+        <!-- =============================== -->
+        <mxCell id="box2" value="Flujo B: Registrar Asistencia por QR" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#d6b656;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="15" y="360" width="630" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m10" value="9: Click 'Registrar Entrada'" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="400" as="sourcePoint"/>
+            <mxPoint x="220" y="400" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="10: POST /api/attendance/qr {qrToken}" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="420" as="sourcePoint"/>
+            <mxPoint x="405" y="420" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="act_ctrl2" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="385" y="415" width="30" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m12" value="11: Client.findOne({usuario: req.user.id})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="445" as="sourcePoint"/>
+            <mxPoint x="580" y="445" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m13" value="12: Verificar no ya registrado hoy" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="465" as="sourcePoint"/>
+            <mxPoint x="580" y="465" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note2" value="Attendance.findOne({&#xa;  cliente, fecha: hoy&#xa;}) para evitar duplicados" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="590" y="440" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m14" value="13: Attendance.create({cliente, fecha, horaEntrada, metodo:'QR', qrToken})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="490" as="sourcePoint"/>
+            <mxPoint x="580" y="490" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m15" value="14: {success, msg: 'Asistencia registrada'}" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="530" as="sourcePoint"/>
+            <mxPoint x="220" y="530" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16" value="15: addToast('¡Entrada registrada!')" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="550" as="sourcePoint"/>
+            <mxPoint x="70" y="550" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- =============================== -->
+        <!-- FLUJO: CONSULTA ADMIN -->
+        <!-- =============================== -->
+        <mxCell id="box3" value="Flujo C: Admin/Entrenador Consulta Asistencias" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="15" y="585" width="630" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a_admin" value="Admin" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="590" width="80" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m20" value="16: GET /api/attendance/?fecha=2026-07-09" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="740" y="630" as="sourcePoint"/>
+            <mxPoint x="405" y="630" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m21" value="17: Attendance.find({fecha}).populate('cliente')" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="650" as="sourcePoint"/>
+            <mxPoint x="580" y="650" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m22" value="18: [{cliente, horaEntrada, metodo, presente}]" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#9673a6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="665" as="sourcePoint"/>
+            <mxPoint x="405" y="665" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
