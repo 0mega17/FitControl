@@ -1,7 +1,7 @@
-const express = require('express');
-const { create, getAll, getById, update, remove, toggleInscripcion } = require('./classGroup.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+﻿const express = require('express');
+const { create, getAll, getById, update, remove, toggleInscripcion } = require('./controladorClases');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 const router = express.Router();
 

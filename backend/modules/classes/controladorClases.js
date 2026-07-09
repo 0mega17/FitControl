@@ -1,6 +1,6 @@
-const ClassGroup = require('../../models/ClassGroup');
-const Trainer = require('../../models/Trainer');
-const Client = require('../../models/Client');
+﻿const ClassGroup = require('../../models/ClaseGrupal');
+const Trainer = require('../../models/Entrenador');
+const Client = require('../../models/Cliente');
 
 const create = async (req, res) => {
   try {

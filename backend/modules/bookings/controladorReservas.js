@@ -1,6 +1,6 @@
-const Booking = require('../../models/Booking');
-const ClassGroup = require('../../models/ClassGroup');
-const Client = require('../../models/Client');
+﻿const Booking = require('../../models/Reserva');
+const ClassGroup = require('../../models/ClaseGrupal');
+const Client = require('../../models/Cliente');
 
 const create = async (req, res) => {
   try {
