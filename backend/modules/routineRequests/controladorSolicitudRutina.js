@@ -1,10 +1,10 @@
-const RoutineRequest = require('../../models/RoutineRequest');
-const Routine = require('../../models/Routine');
-const AssignedRoutine = require('../../models/AssignedRoutine');
-const Client = require('../../models/Client');
+﻿const RoutineRequest = require('../../models/SolicitudRutina');
+const Routine = require('../../models/Rutina');
+const AssignedRoutine = require('../../models/RutinaAsignada');
+const Client = require('../../models/Cliente');
 const { createNotification, notifyAdminsAndTrainers } = require('../../services/notificationService');
 
-const createRequest = async (req, res) => {
+const crearSolicitud = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
     if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
@@ -30,7 +30,7 @@ const createRequest = async (req, res) => {
   }
 };
 
-const getMyRequests = async (req, res) => {
+const obtenerMisSolicitudes = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
     if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
@@ -46,7 +46,7 @@ const getMyRequests = async (req, res) => {
   }
 };
 
-const getAllPending = async (req, res) => {
+const obtenerPendientes = async (req, res) => {
   try {
     const solicitudes = await RoutineRequest.find()
       .populate({ path: 'clienteId', populate: { path: 'usuario', select: 'nombre apellido email' } })
@@ -60,7 +60,7 @@ const getAllPending = async (req, res) => {
   }
 };
 
-const getById = async (req, res) => {
+const obtenerPorId = async (req, res) => {
   try {
     const solicitud = await RoutineRequest.findById(req.params.id)
       .populate({ path: 'clienteId', populate: { path: 'usuario', select: 'nombre apellido email' } })
@@ -89,7 +89,7 @@ const getClienteUserId = async (clienteId) => {
   }
 };
 
-const approveRequest = async (req, res) => {
+const aprobarSolicitud = async (req, res) => {
   try {
     const solicitud = await RoutineRequest.findByIdAndUpdate(
       req.params.id,
@@ -107,7 +107,7 @@ const approveRequest = async (req, res) => {
   }
 };
 
-const rejectRequest = async (req, res) => {
+const rechazarSolicitud = async (req, res) => {
   try {
     const { motivo } = req.body;
     const solicitud = await RoutineRequest.findByIdAndUpdate(
@@ -126,7 +126,7 @@ const rejectRequest = async (req, res) => {
   }
 };
 
-const assignRoutineToRequest = async (req, res) => {
+const asignarRutina = async (req, res) => {
   try {
     const { rutinaId } = req.body;
     const solicitud = await RoutineRequest.findById(req.params.id);
@@ -158,4 +158,4 @@ const assignRoutineToRequest = async (req, res) => {
   }
 };
 
-module.exports = { createRequest, getMyRequests, getAllPending, getById, approveRequest, rejectRequest, assignRoutineToRequest };
+module.exports = { crearSolicitud, obtenerMisSolicitudes, obtenerPendientes, obtenerPorId, aprobarSolicitud, rechazarSolicitud, asignarRutina };
