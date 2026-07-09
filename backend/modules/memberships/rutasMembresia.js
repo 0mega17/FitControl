@@ -1,7 +1,7 @@
-const express = require('express');
-const { createMembership, getAll, getActive, getExpired, getSemaforo, getMyPlan, getMyMemberships, getPrices, updatePrices, updateMembership, renewMembership, cancelMembership, getMyPlanEnhanced, changePlan, getMembershipHistory } = require('./membership.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+﻿const express = require('express');
+const { createMembership, getAll, getActive, getExpired, getSemaforo, getMyPlan, getMyMemberships, getPrices, updatePrices, updateMembership, renewMembership, cancelMembership, getMyPlanEnhanced, changePlan, getMembershipHistory } = require('./controladorMembresia');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 const router = express.Router();
 
