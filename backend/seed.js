@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Role = require('./models/Role');
-const User = require('./models/User');
-const Client = require('./models/Client');
-const Trainer = require('./models/Trainer');
+const Role = require('./models/Rol');
+const User = require('./models/Usuario');
+const Client = require('./models/Cliente');
+const Trainer = require('./models/Entrenador');
 
 dotenv.config();
 
