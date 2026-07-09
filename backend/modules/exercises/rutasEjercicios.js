@@ -1,6 +1,6 @@
-const express = require('express');
-const { list, getById, getBodyParts, getTargetMuscles, getEquipment } = require('./exercise.controller');
-const { protect } = require('../../middleware/authMiddleware');
+﻿const express = require('express');
+const { list, getById, getBodyParts, getTargetMuscles, getEquipment } = require('./controladorEjercicios');
+const { protect } = require('../../middleware/autenticacionMiddleware');
 
 const router = express.Router();
 

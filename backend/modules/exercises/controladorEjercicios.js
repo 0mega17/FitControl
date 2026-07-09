@@ -1,5 +1,5 @@
-const exerciseService = require('../../services/exerciseService');
-const translationService = require('../../services/translationService');
+﻿const exerciseService = require('../../services/servicioEjercicios');
+const translationService = require('../../services/servicioTraduccion');
 
 const list = async (req, res) => {
   try {
