@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-fitness-black text-white font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-fitness-black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-fitness-lightgray rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-fitness-muted;
+  }
+}
+
+@layer components {
+  .card-gradient {
+    background: linear-gradient(135deg, #1A1A1A 0%, #121212 100%);
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-fitness-red to-fitness-orange text-white font-semibold
+           px-6 py-2.5 rounded-lg transition-all duration-300
+           hover:shadow-glow hover:scale-105 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  .btn-secondary {
+    @apply bg-fitness-gray text-white font-semibold px-6 py-2.5 rounded-lg
+           transition-all duration-300 hover:bg-fitness-lightgray
+           active:scale-95 disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply text-fitness-muted hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg;
+  }
+
+  .input-fitness {
+    @apply w-full bg-fitness-dark border border-fitness-gray rounded-lg px-4 py-2.5
+           text-white placeholder-fitness-muted
+           focus:outline-none focus:border-fitness-red focus:ring-1 focus:ring-fitness-red
+           transition-all duration-200;
+  }
+
+  .card-fitness {
+    @apply card-gradient border border-fitness-gray rounded-xl shadow-card
+           transition-all duration-300 hover:shadow-card-hover;
+  }
+
+  .stat-card {
+    @apply card-fitness p-6 flex items-center gap-4;
+  }
+
+  .glass-effect {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .gif-fit {
+    image-rendering: auto;
+    -ms-interpolation-mode: bicubic;
+  }
+
+  .gif-glow {
+    position: relative;
+  }
+
+  .gif-glow::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+}
