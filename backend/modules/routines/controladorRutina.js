@@ -2,9 +2,9 @@
 const AssignedRoutine = require('../../models/RutinaAsignada');
 const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
-const { createNotification } = require('../../services/notificationService');
+const { createNotification } = require('../../services/servicioNotificaciones');
 
-const create = async (req, res) => {
+const crear = async (req, res) => {
   try {
     const { nombre, descripcion, nivel, objetivo, grupoMuscularPrincipal, grupoMuscularSecundario, ejercicios } = req.body;
 
@@ -26,7 +26,7 @@ const create = async (req, res) => {
   }
 };
 
-const getAll = async (req, res) => {
+const obtenerTodas = async (req, res) => {
   try {
     const rutinas = await Routine.find({ esPlantilla: true })
       .populate('creadoPor', 'nombre apellido')
@@ -37,7 +37,7 @@ const getAll = async (req, res) => {
   }
 };
 
-const getById = async (req, res) => {
+const obtenerPorId = async (req, res) => {
   try {
     const rutina = await Routine.findById(req.params.id)
       .populate('creadoPor', 'nombre apellido');
@@ -48,7 +48,7 @@ const getById = async (req, res) => {
   }
 };
 
-const update = async (req, res) => {
+const actualizar = async (req, res) => {
   try {
     const { ejercicios, ...data } = req.body;
     const updateData = { ...data };
@@ -64,7 +64,7 @@ const update = async (req, res) => {
   }
 };
 
-const remove = async (req, res) => {
+const eliminar = async (req, res) => {
   try {
     await AssignedRoutine.deleteMany({ rutina: req.params.id });
     const rutina = await Routine.findByIdAndDelete(req.params.id);
@@ -75,7 +75,7 @@ const remove = async (req, res) => {
   }
 };
 
-const assign = async (req, res) => {
+const asignar = async (req, res) => {
   try {
     const { clienteId } = req.body;
     const rutina = await Routine.findById(req.params.id);
@@ -103,7 +103,7 @@ const assign = async (req, res) => {
   }
 };
 
-const myRoutine = async (req, res) => {
+const miRutina = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
     if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
@@ -121,7 +121,7 @@ const myRoutine = async (req, res) => {
   }
 };
 
-const listClients = async (req, res) => {
+const listaClientes = async (req, res) => {
   try {
     const clients = await Client.find()
       .populate('usuario', 'nombre apellido email')
@@ -132,4 +132,4 @@ const listClients = async (req, res) => {
   }
 };
 
-module.exports = { create, getAll, getById, update, remove, assign, myRoutine, listClients };
+module.exports = { crear, obtenerTodas, obtenerPorId, actualizar, eliminar, asignar, miRutina, listaClientes };
