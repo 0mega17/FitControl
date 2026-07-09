@@ -1,7 +1,7 @@
-const express = require('express');
-const { generateQR, registerByQR, registerManual, getByClient, getAll } = require('./attendance.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+﻿const express = require('express');
+const { generateQR, registerByQR, registerManual, getByClient, getAll } = require('./controladorAsistencia');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 const router = express.Router();
 
