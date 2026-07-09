@@ -46,9 +46,8 @@ const seedPlans = async () => {
 };
 seedPlans();
 
-app.use('/api/auth', require('./modules/auth/auth.routes'));
-app.use('/api/auth', require('./modules/auth/auth.routes'));
-app.use('/api/users', require('./modules/users/users.routes'));
+app.use('/api/auth', require('./modules/auth/rutasAuth'));
+app.use('/api/users', require('./modules/users/rutasUsuario'));
 app.use('/api/memberships', require('./modules/memberships/memberships.routes'));
 app.use('/api/dashboard', require('./modules/dashboard/dashboard.routes'));
 app.use('/api/routines', require('./modules/routines/routines.routes'));
