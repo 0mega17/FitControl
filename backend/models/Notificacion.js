@@ -13,4 +13,5 @@ const notificationSchema = new mongoose.Schema({
 
 notificationSchema.index({ usuario: 1, leida: 1 });
 
+/** @description Modelo de notificaciones del sistema (in-app, email, WhatsApp) */
 module.exports = mongoose.model('Notification', notificationSchema);

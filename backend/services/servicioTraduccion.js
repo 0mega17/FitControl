@@ -559,6 +559,11 @@ const DICT = new Map([
   ['barbell wrist curl', 'curl de muñeca con barra'],
 ]);
 
+/**
+ * @description Busca una traducción en el diccionario interno DICT.
+ * @param {string} text - Texto en inglés
+ * @returns {string|null}
+ */
 const translateWithDict = (text) => {
   const lower = text.toLowerCase().trim();
   return DICT.get(lower) || null;
@@ -591,8 +596,19 @@ const translateWithGoogle = async (text) => {
   }
 };
 
+/**
+ * @description Elimina el prefijo "Step:NN" de un texto de instrucción.
+ * @param {string} text
+ * @returns {string}
+ */
 const cleanStep = (text) => text.replace(/^Step:\d+\s*/i, '');
 
+/**
+ * @description Traduce un texto de inglés a español usando diccionario,
+ *              MyMemory API o Google Translate API (con caché de 24h).
+ * @param {string} text - Texto a traducir
+ * @returns {Promise<string>}
+ */
 const translateText = async (text) => {
   if (!text || text.trim() === '') return text;
   const trimmed = cleanStep(text.trim());
@@ -630,6 +646,12 @@ const translateArray = async (arr) => {
   return Promise.all(arr.map(item => translateText(item)));
 };
 
+/**
+ * @description Traduce todos los campos de texto de un objeto ejercicio
+ *              (nombre, partes del cuerpo, equipamiento, instrucciones, etc.).
+ * @param {Object} exercise - Ejercicio desde ExerciseDB API
+ * @returns {Promise<Object>} Ejercicio con campos traducidos + raw originales
+ */
 const translateExercise = async (exercise) => {
   if (!exercise) return exercise;
 
@@ -658,11 +680,20 @@ const translateExercise = async (exercise) => {
   };
 };
 
+/**
+ * @description Traduce un array de ejercicios completos.
+ * @param {Object[]} exercises - Array de ejercicios desde ExerciseDB
+ * @returns {Promise<Object[]>}
+ */
 const translateExercises = async (exercises) => {
   if (!Array.isArray(exercises)) return exercises;
   return Promise.all(exercises.map(ex => translateExercise(ex)));
 };
 
+/**
+ * @description Limpia la caché de traducciones.
+ * @returns {void}
+ */
 const clearCache = () => cache.clear();
 
 module.exports = { translateText, translateExercise, translateExercises, clearCache };

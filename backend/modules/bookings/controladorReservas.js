@@ -2,6 +2,13 @@
 const ClassGroup = require('../../models/ClaseGrupal');
 const Client = require('../../models/Cliente');
 
+/**
+ * @description Crea una reserva para una clase grupal. Verifica capacidad y duplicados.
+ * @route POST /api/bookings
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const create = async (req, res) => {
   try {
     const { claseId, fecha } = req.body;
@@ -27,6 +34,13 @@ const create = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene las reservas del cliente autenticado.
+ * @route GET /api/bookings/my
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMyBookings = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -39,6 +53,13 @@ const getMyBookings = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las reservas del sistema (solo admin/entrenadores).
+ * @route GET /api/bookings
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const reservas = await Booking.find()
@@ -51,6 +72,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Cancela una reserva por su ID.
+ * @route PUT /api/bookings/:id/cancel
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const cancel = async (req, res) => {
   try {
     const reserva = await Booking.findByIdAndUpdate(req.params.id, { estado: 'cancelada' }, { new: true });

@@ -2,6 +2,13 @@
 const Trainer = require('../../models/Entrenador');
 const Client = require('../../models/Cliente');
 
+/**
+ * @description Crea una nueva clase grupal (solo administradores y entrenadores).
+ * @route POST /api/classes
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const create = async (req, res) => {
   try {
     let entrenador = await Trainer.findOne({ usuario: req.user._id });
@@ -25,6 +32,13 @@ const create = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las clases grupales activas con entrenador e inscritos.
+ * @route GET /api/classes
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const clases = await ClassGroup.find({ activa: true })
@@ -36,6 +50,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene una clase grupal por su ID.
+ * @route GET /api/classes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getById = async (req, res) => {
   try {
     const clase = await ClassGroup.findById(req.params.id)
@@ -48,6 +69,13 @@ const getById = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza los datos de una clase grupal.
+ * @route PUT /api/classes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const update = async (req, res) => {
   try {
     const clase = await ClassGroup.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -58,6 +86,13 @@ const update = async (req, res) => {
   }
 };
 
+/**
+ * @description Elimina una clase grupal por su ID.
+ * @route DELETE /api/classes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const remove = async (req, res) => {
   try {
     await ClassGroup.findByIdAndDelete(req.params.id);
@@ -67,6 +102,14 @@ const remove = async (req, res) => {
   }
 };
 
+/**
+ * @description Inscribe o desinscribe al cliente autenticado de una clase grupal.
+ *              Verifica capacidad máxima antes de inscribir.
+ * @route POST /api/classes/:id/inscribirse
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const toggleInscripcion = async (req, res) => {
   try {
     const clase = await ClassGroup.findById(req.params.id);
