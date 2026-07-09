@@ -1,3 +1,4 @@
+const axios = require('axios');
 const cache = new Map();
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
@@ -563,6 +564,33 @@ const translateWithDict = (text) => {
   return DICT.get(lower) || null;
 };
 
+const translateWithMyMemory = async (text) => {
+  try {
+    const { data } = await axios.get(
+      'https://api.mymemory.translated.net/get',
+      { params: { q: text, langpair: 'en|es' }, timeout: 3000 }
+    );
+    return data?.responseData?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
+const translateWithGoogle = async (text) => {
+  const key = process.env.GOOGLE_TRANSLATE_API_KEY;
+  if (!key) return null;
+  try {
+    const { data } = await axios.post(
+      `https://translation.googleapis.com/language/translate/v2?key=${key}`,
+      { q: text, target: 'es', source: 'en' },
+      { timeout: 5000 }
+    );
+    return data?.data?.translations?.[0]?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
 const cleanStep = (text) => text.replace(/^Step:\d+\s*/i, '');
 
 const translateText = async (text) => {
@@ -576,8 +604,25 @@ const translateText = async (text) => {
   }
 
   const dictResult = translateWithDict(trimmed);
-  cache.set(cacheKey, { text: dictResult || trimmed, timestamp: Date.now() });
-  return dictResult || trimmed;
+  if (dictResult) {
+    cache.set(cacheKey, { text: dictResult, timestamp: Date.now() });
+    return dictResult;
+  }
+
+  const mymemory = await translateWithMyMemory(trimmed);
+  if (mymemory && mymemory.toLowerCase() !== trimmed.toLowerCase()) {
+    cache.set(cacheKey, { text: mymemory, timestamp: Date.now() });
+    return mymemory;
+  }
+
+  const google = await translateWithGoogle(trimmed);
+  if (google) {
+    cache.set(cacheKey, { text: google, timestamp: Date.now() });
+    return google;
+  }
+
+  cache.set(cacheKey, { text: trimmed, timestamp: Date.now() });
+  return trimmed;
 };
 
 const translateArray = async (arr) => {
