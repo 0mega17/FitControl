@@ -1,6 +1,15 @@
 ﻿const jwt = require('jsonwebtoken');
 const User = require('../models/Usuario');
 
+/**
+ * @description Middleware que protege rutas verificando un token JWT Bearer.
+ *              Adjunta `req.user` con datos del usuario autenticado.
+ *              Rechaza cuentas inactivas y tokens expirados o inválidos.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns {Promise<void>}
+ */
 const protect = async (req, res, next) => {
   let token;
 

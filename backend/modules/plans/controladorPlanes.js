@@ -1,5 +1,12 @@
 const Plan = require('../../models/Plan');
 
+/**
+ * @description Obtiene todos los planes
+ * @route GET /api/planes
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.getAllPlans = async (req, res) => {
   try {
     const filter = req.user?.rol?.nombre === 'Administrador' ? {} : { activo: true };
@@ -11,6 +18,13 @@ exports.getAllPlans = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene un plan por ID
+ * @route GET /api/planes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.getPlan = async (req, res) => {
   try {
     const plan = await Plan.findById(req.params.id);
@@ -25,6 +39,13 @@ exports.getPlan = async (req, res) => {
   }
 };
 
+/**
+ * @description Crea un nuevo plan
+ * @route POST /api/planes
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.createPlan = async (req, res) => {
   try {
     const { nombre, precio, duracionDias, beneficios, descripcion } = req.body;
@@ -37,6 +58,13 @@ exports.createPlan = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza un plan existente
+ * @route PUT /api/planes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.updatePlan = async (req, res) => {
   try {
     const { nombre, precio, duracionDias, beneficios, descripcion, activo } = req.body;
@@ -53,6 +81,13 @@ exports.updatePlan = async (req, res) => {
   }
 };
 
+/**
+ * @description Elimina un plan por ID
+ * @route DELETE /api/planes/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 exports.deletePlan = async (req, res) => {
   try {
     const plan = await Plan.findByIdAndDelete(req.params.id);

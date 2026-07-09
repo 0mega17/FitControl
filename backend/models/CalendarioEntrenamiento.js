@@ -15,4 +15,5 @@ const workoutCalendarSchema = new mongoose.Schema({
 workoutCalendarSchema.index({ entrenador: 1, fecha: 1 });
 workoutCalendarSchema.index({ cliente: 1, fecha: 1 });
 
+/** @description Modelo de eventos del calendario de entrenamiento (sesiones, clases, evaluaciones) */
 module.exports = mongoose.model('WorkoutCalendar', workoutCalendarSchema);

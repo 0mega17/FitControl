@@ -31,4 +31,5 @@ const routineSchema = new mongoose.Schema({
   esPlantilla: { type: Boolean, default: true }
 }, { timestamps: true });
 
+/** @description Modelo de rutinas de ejercicios con sub-documento de ejercicios */
 module.exports = mongoose.model('Routine', routineSchema);
