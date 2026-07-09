@@ -1,12 +1,12 @@
-const Notification = require('../models/Notification');
-const User = require('../models/User');
-const Membership = require('../models/Membership');
-const RoutineRequest = require('../models/RoutineRequest');
+﻿const Notification = require('../models/Notificacion');
+const User = require('../models/Usuario');
+const Membership = require('../models/Membresia');
+const RoutineRequest = require('../models/SolicitudRutina');
 const { createNotification, notifyAdminsAndTrainers } = require('./notificationService');
 
 const getClienteUserId = async (clienteId) => {
   try {
-    const Client = require('../models/Client');
+    const Client = require('../models/Cliente');
     const client = await Client.findById(clienteId);
     return client?.usuario;
   } catch { return null; }

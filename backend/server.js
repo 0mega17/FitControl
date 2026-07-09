@@ -1,8 +1,8 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const Role = require('./models/Role');
+const Role = require('./models/Rol');
 const Plan = require('./models/Plan');
 
 dotenv.config();
@@ -71,7 +71,7 @@ app.get('/api/public/plans', async (_req, res) => {
   }
 });
 
-const { startScheduledChecks } = require('./services/cronService');
+const { startScheduledChecks } = require('./services/servicioCron');
 startScheduledChecks();
 
 app.get('/', (req, res) => {
