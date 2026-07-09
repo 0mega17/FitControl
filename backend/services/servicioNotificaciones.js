@@ -1,5 +1,5 @@
-const Notification = require('../models/Notification');
-const User = require('../models/User');
+﻿const Notification = require('../models/Notificacion');
+const User = require('../models/Usuario');
 
 const createNotification = async ({ usuarioId, asunto, mensaje, severidad = 'info', tipo = 'in-app' }) => {
   try {
