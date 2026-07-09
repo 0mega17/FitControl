@@ -1,6 +1,16 @@
 ﻿const Notification = require('../models/Notificacion');
 const User = require('../models/Usuario');
 
+/**
+ * @description Crea una notificación para un usuario, evitando duplicados en 24h.
+ * @param {Object} opts
+ * @param {string} opts.usuarioId - ObjectId del usuario destino
+ * @param {string} opts.asunto - Título de la notificación
+ * @param {string} opts.mensaje - Cuerpo de la notificación
+ * @param {'info'|'warning'|'urgent'} [opts.severidad='info']
+ * @param {'email'|'whatsapp'|'in-app'} [opts.tipo='in-app']
+ * @returns {Promise<Object|null>}
+ */
 const createNotification = async ({ usuarioId, asunto, mensaje, severidad = 'info', tipo = 'in-app' }) => {
   try {
     const exists = await Notification.findOne({
@@ -20,6 +30,15 @@ const createNotification = async ({ usuarioId, asunto, mensaje, severidad = 'inf
   }
 };
 
+/**
+ * @description Notifica a todos los usuarios con un rol específico.
+ * @param {Object} opts
+ * @param {string} opts.rol - Nombre del rol (Administrador|Entrenador|Cliente)
+ * @param {string} opts.asunto
+ * @param {string} opts.mensaje
+ * @param {'info'|'warning'|'urgent'} [opts.severidad='info']
+ * @returns {Promise<void>}
+ */
 const notifyAllByRole = async ({ rol, asunto, mensaje, severidad = 'info' }) => {
   try {
     const users = await User.find().populate('rol', 'nombre');
@@ -34,6 +53,14 @@ const notifyAllByRole = async ({ rol, asunto, mensaje, severidad = 'info' }) => 
   }
 };
 
+/**
+ * @description Notifica a todos los administradores y entrenadores del sistema.
+ * @param {Object} opts
+ * @param {string} opts.asunto
+ * @param {string} opts.mensaje
+ * @param {'info'|'warning'|'urgent'} [opts.severidad='info']
+ * @returns {Promise<void>}
+ */
 const notifyAdminsAndTrainers = async ({ asunto, mensaje, severidad = 'info' }) => {
   await notifyAllByRole({ rol: 'Administrador', asunto, mensaje, severidad });
   await notifyAllByRole({ rol: 'Entrenador', asunto, mensaje, severidad });

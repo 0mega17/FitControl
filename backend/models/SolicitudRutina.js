@@ -37,4 +37,5 @@ const routineRequestSchema = new mongoose.Schema({
   motivoRechazo: { type: String }
 }, { timestamps: true });
 
+/** @description Modelo de solicitudes personalizadas de rutina por cliente */
 module.exports = mongoose.model('RoutineRequest', routineRequestSchema);

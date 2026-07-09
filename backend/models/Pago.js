@@ -28,4 +28,5 @@ const paymentSchema = new mongoose.Schema({
   timestamps: true
 });
 
+/** @description Modelo de pagos asociados a membresías y clientes */
 module.exports = mongoose.model('Payment', paymentSchema);
