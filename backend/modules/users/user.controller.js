@@ -1,6 +1,7 @@
-const User = require('../../models/User');
-const Client = require('../../models/Client');
-const Trainer = require('../../models/Trainer');
+const User = require('../../models/Usuario');
+const Client = require('../../models/Cliente');
+const Trainer = require('../../models/Entrenador');
+const Role = require('../../models/Rol');
 
 const getProfile = async (req, res) => {
   try {
@@ -78,7 +79,6 @@ const activateUser = async (req, res) => {
 const changeUserRole = async (req, res) => {
   try {
     const { rolId } = req.body;
-    const Role = require('../../models/Role');
     const rol = await Role.findById(rolId);
     if (!rol) return res.status(404).json({ mensaje: 'Rol no encontrado' });
 
@@ -88,7 +88,6 @@ const changeUserRole = async (req, res) => {
     usuario.rol = rol._id;
     await usuario.save();
 
-    // If changing from Cliente, delete Client record
     if (usuario.rol.nombre !== 'Cliente') {
       await Client.findOneAndDelete({ usuario: usuario._id });
     }

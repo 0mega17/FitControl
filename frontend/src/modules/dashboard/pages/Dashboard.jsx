@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { reportsAPI } from '../../services/api'
-import { Card, CardTitle } from '../../components/ui/Card'
+import { Card } from '../../components/ui/Card'
 import { PageSpinner } from '../../components/ui/Spinner'
 import {
   FiUsers, FiUserCheck, FiCheckCircle, FiAlertTriangle,
@@ -50,7 +50,7 @@ function Dashboard() {
       try {
         const { data } = await reportsAPI.getDashboard()
         setStats(data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../../models/User');
-const Role = require('../../models/Role');
-const Client = require('../../models/Client');
-const Trainer = require('../../models/Trainer');
-const RefreshToken = require('../../models/RefreshToken');
-const Membership = require('../../models/Membership');
-const MembershipHistory = require('../../models/MembershipHistory');
-const { createNotification, notifyAllByRole } = require('../../services/notificationService');
+const User = require('../../models/Usuario');
+const Role = require('../../models/Rol');
+const Client = require('../../models/Cliente');
+const Trainer = require('../../models/Entrenador');
+const RefreshToken = require('../../models/TokenRefresco');
+const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const Plan = require('../../models/Plan');
+const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
 
 const generarToken = (usuario) => {
   return jwt.sign(
@@ -57,7 +58,6 @@ const register = async (req, res) => {
     }
 
     if (planId) {
-      const Plan = require('../../models/Plan');
       const plan = await Plan.findById(planId);
       if (!plan || !plan.activo) {
         return res.status(400).json({ mensaje: 'El plan seleccionado no está disponible' });
@@ -87,7 +87,6 @@ const register = async (req, res) => {
     }
 
     if (planId && cliente) {
-      const Plan = require('../../models/Plan');
       const plan = await Plan.findById(planId);
       if (plan && plan.activo) {
         const fechaInicio = new Date();

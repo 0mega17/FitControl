@@ -20,7 +20,6 @@ function Memberships() {
   const [precios, setPrecios] = useState({ Diaria: 10, Semanal: 50, Mensual: 150, Trimestral: 400, Anual: 1200 })
   const [editPrecios, setEditPrecios] = useState({})
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [formData, setFormData] = useState({ tipo: 'Mensual', clienteEmail: '', metodoPago: 'Efectivo' })
   const [filtro, setFiltro] = useState('todas')
   const [searchTerm, setSearchTerm] = useState('')
@@ -34,7 +33,7 @@ function Memberships() {
     try {
       const { data } = await membershipsAPI.getSemaforo()
       setMembresias(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 

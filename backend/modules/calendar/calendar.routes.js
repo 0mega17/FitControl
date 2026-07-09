@@ -1,7 +1,7 @@
 const express = require('express');
 const { create, getAll, update, remove } = require('./calendar.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 const router = express.Router();
 

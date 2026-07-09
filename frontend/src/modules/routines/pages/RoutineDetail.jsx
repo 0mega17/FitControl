@@ -24,7 +24,7 @@ function RoutineDetail() {
       try {
         const { data } = await routinesAPI.getById(id)
         setRutina(data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

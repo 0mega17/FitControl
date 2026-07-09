@@ -24,7 +24,7 @@ function MyRequests() {
       try {
         const { data } = await routineRequestsAPI.getMy()
         setSolicitudes(data || [])
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

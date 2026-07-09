@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const planController = require('./plan.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 router.get('/', protect, planController.getAllPlans);
 router.get('/:id', protect, planController.getPlan);

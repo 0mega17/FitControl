@@ -1,5 +1,5 @@
-const Progress = require('../../models/Progress');
-const Client = require('../../models/Client');
+const Progress = require('../../models/Progreso');
+const Client = require('../../models/Cliente');
 
 const create = async (req, res) => {
   try {

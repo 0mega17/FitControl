@@ -14,7 +14,7 @@ function Attendance() {
       try {
         const { data } = await attendanceAPI.getAll(fecha)
         setAsistencias(data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

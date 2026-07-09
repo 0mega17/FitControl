@@ -22,8 +22,6 @@ function RoutinesWrapper() {
 
 import Progress from './modules/progress/pages/Progress'
 import Attendance from './modules/attendance/pages/Attendance'
-import Classes from './modules/classes/pages/Classes'
-import Bookings from './modules/bookings/pages/Bookings'
 import MyQR from './modules/profile/pages/MyQR'
 import Notifications from './modules/notifications/pages/Notifications'
 import Calendar from './modules/calendar/pages/Calendar'
@@ -57,8 +55,6 @@ function App() {
           <Route path="trainer-requests" element={<ProtectedRoute roles={['Administrador', 'Entrenador']}><TrainerRequests /></ProtectedRoute>} />
           <Route path="progress" element={<ProtectedRoute roles={['Cliente', 'Administrador', 'Entrenador']}><Progress /></ProtectedRoute>} />
           <Route path="attendance" element={<ProtectedRoute roles={['Administrador', 'Entrenador']}><Attendance /></ProtectedRoute>} />
-          <Route path="classes" element={<ProtectedRoute roles={['Administrador', 'Entrenador', 'Cliente']}><Classes /></ProtectedRoute>} />
-          <Route path="my-bookings" element={<ProtectedRoute roles={['Cliente']}><Bookings /></ProtectedRoute>} />
           <Route path="my-qr" element={<ProtectedRoute roles={['Cliente']}><MyQR /></ProtectedRoute>} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="calendar" element={<ProtectedRoute roles={['Administrador', 'Entrenador']}><Calendar /></ProtectedRoute>} />

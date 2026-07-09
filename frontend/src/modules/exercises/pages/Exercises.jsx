@@ -39,7 +39,7 @@ function ExerciseCatalog() {
       setExercises(data.results || [])
       setNextCursor(data.nextCursor || null)
       setHasNextPage(data.hasNextPage || false)
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 
@@ -53,7 +53,7 @@ function ExerciseCatalog() {
       setBodyParts(bp.data || [])
       setTargets(tm.data || [])
       setEquipmentList(eq.data || [])
-    } catch (err) { console.error('Filters:', err) }
+    } catch (err) { }
   }
 
   useEffect(() => { fetchFilters(); fetchExercises(buildParams()) }, [])

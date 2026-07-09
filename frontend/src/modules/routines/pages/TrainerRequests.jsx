@@ -28,7 +28,7 @@ function TrainerRequests() {
     try {
       const { data } = await routineRequestsAPI.getAll()
       setSolicitudes(data || [])
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 

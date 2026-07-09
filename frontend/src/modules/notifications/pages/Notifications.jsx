@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { notificationsAPI } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
 import { PageSpinner } from '../../components/ui/Spinner'
@@ -12,13 +11,12 @@ function Notifications() {
   const [notis, setNotis] = useState([])
   const [loading, setLoading] = useState(true)
   const [success, setSuccess] = useState('')
-  const { user } = useAuth()
 
   const fetchNotis = async () => {
     try {
       const { data } = await notificationsAPI.getMy()
       setNotis(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 
@@ -28,7 +26,7 @@ function Notifications() {
     try {
       await notificationsAPI.markAsRead(id)
       fetchNotis()
-    } catch (err) { console.error(err) }
+    } catch (err) { }
   }
 
   const handleMarkAllRead = async () => {
@@ -36,7 +34,7 @@ function Notifications() {
       await notificationsAPI.markAllAsRead()
       setSuccess('Todas marcadas como leidas')
       fetchNotis()
-    } catch (err) { console.error(err) }
+    } catch (err) { }
   }
 
   if (loading) return <PageSpinner />

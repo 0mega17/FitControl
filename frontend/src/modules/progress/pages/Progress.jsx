@@ -24,7 +24,7 @@ function Progress() {
         const [progRes, lastRes] = await Promise.all([progressAPI.getAll(), progressAPI.getLast()])
         setProgresos(progRes.data)
         setUltimo(lastRes.data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

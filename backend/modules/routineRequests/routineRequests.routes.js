@@ -3,8 +3,8 @@ const {
   createRequest, getMyRequests, getAllPending, getById,
   approveRequest, rejectRequest, assignRoutineToRequest
 } = require('./routineRequest.controller');
-const { protect } = require('../../middleware/authMiddleware');
-const { authorize } = require('../../middleware/roleMiddleware');
+const { protect } = require('../../middleware/autenticacionMiddleware');
+const { authorize } = require('../../middleware/rolMiddleware');
 
 const router = express.Router();
 

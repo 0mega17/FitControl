@@ -26,7 +26,6 @@ const list = async (req, res) => {
       results: translated
     });
   } catch (error) {
-    console.error('[ExerciseController] list:', error.message);
     res.status(500).json({ mensaje: 'Error al obtener ejercicios', error: error.message });
   }
 };

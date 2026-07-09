@@ -2,11 +2,11 @@
 const User = require('../models/Usuario');
 const Membership = require('../models/Membresia');
 const RoutineRequest = require('../models/SolicitudRutina');
-const { createNotification, notifyAdminsAndTrainers } = require('./notificationService');
+const Client = require('../models/Cliente');
+const { createNotification, notifyAdminsAndTrainers } = require('./servicioNotificaciones');
 
 const getClienteUserId = async (clienteId) => {
   try {
-    const Client = require('../models/Cliente');
     const client = await Client.findById(clienteId);
     return client?.usuario;
   } catch { return null; }
@@ -61,7 +61,6 @@ const checkMembershipExpirations = async () => {
       }
     }
   } catch (error) {
-    console.error('Error en checkMembershipExpirations:', error.message);
   }
 };
 
@@ -82,7 +81,6 @@ const checkExpiredMemberships = async () => {
       }
     }
 
-    // notify admins about expired memberships
     if (expired.length > 0) {
       const adminExists = await Notification.findOne({
         asunto: 'Membresias vencidas',
@@ -93,7 +91,6 @@ const checkExpiredMemberships = async () => {
       }
     }
   } catch (error) {
-    console.error('Error en checkExpiredMemberships:', error.message);
   }
 };
 
@@ -115,7 +112,6 @@ const checkStaleRequests = async () => {
       }
     }
   } catch (error) {
-    console.error('Error en checkStaleRequests:', error.message);
   }
 };
 

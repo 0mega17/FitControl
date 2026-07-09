@@ -1,6 +1,6 @@
-const User = require('../../models/User');
-const Role = require('../../models/Role');
-const Membership = require('../../models/Membership');
+const User = require('../../models/Usuario');
+const Role = require('../../models/Rol');
+const Membership = require('../../models/Membresia');
 
 const getStats = async (req, res) => {
   try {

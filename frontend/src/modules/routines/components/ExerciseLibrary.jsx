@@ -61,7 +61,7 @@ function ExerciseLibrary({ muscleGroup, onAddExercise, addedIds }) {
       setHasNext(data.hasNextPage || false)
       if (reset) setCursor(null)
       else setCursor(c)
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 

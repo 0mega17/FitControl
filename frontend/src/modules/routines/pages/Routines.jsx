@@ -34,7 +34,7 @@ function Routines() {
     try {
       const { data } = await routinesAPI.getAll()
       setRutinas(data || [])
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 
@@ -66,7 +66,7 @@ function Routines() {
     try {
       await routinesAPI.remove(id)
       fetchRutinas()
-    } catch (err) { console.error(err) }
+    } catch (err) { }
   }
 
   if (loading) return <PageSpinner />

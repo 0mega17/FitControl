@@ -18,7 +18,7 @@ function Reports() {
       try {
         const { data } = await reportsAPI.get({ desde, hasta })
         setReport(data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

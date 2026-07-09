@@ -1,4 +1,4 @@
-const Notification = require('../../models/Notification');
+const Notification = require('../../models/Notificacion');
 
 const create = async (req, res) => {
   try {
@@ -61,7 +61,6 @@ const getUnreadCount = async (req, res) => {
 const sendTestEmail = async (req, res) => {
   try {
     const { email, asunto, mensaje } = req.body;
-    console.log(`[SIMULACIÓN] Email enviado a ${email}: ${asunto} - ${mensaje}`);
     res.json({ mensaje: 'Email enviado (simulación)', enviado: true });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al enviar email', error: error.message });
@@ -71,7 +70,6 @@ const sendTestEmail = async (req, res) => {
 const sendTestWhatsApp = async (req, res) => {
   try {
     const { telefono, mensaje } = req.body;
-    console.log(`[SIMULACIÓN] WhatsApp enviado a ${telefono}: ${mensaje}`);
     res.json({ mensaje: 'WhatsApp enviado (simulación)', enviado: true });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al enviar WhatsApp', error: error.message });

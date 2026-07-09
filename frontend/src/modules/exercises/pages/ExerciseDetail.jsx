@@ -22,7 +22,7 @@ function ExerciseDetail() {
       try {
         const { data } = await exercisesAPI.getById(id)
         setExercise(data)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()

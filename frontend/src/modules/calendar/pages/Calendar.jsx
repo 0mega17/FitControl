@@ -6,7 +6,6 @@ import Badge from '../../components/ui/Badge'
 import Modal from '../../components/ui/Modal'
 import { PageSpinner } from '../../components/ui/Spinner'
 import { calendarAPI } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
 
 function Calendar() {
   const [eventos, setEventos] = useState([])
@@ -14,13 +13,12 @@ function Calendar() {
   const [showModal, setShowModal] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({ titulo: '', clienteId: '', fecha: '', horaInicio: '', horaFin: '', tipo: 'Sesión Personal', notas: '' })
-  const { user } = useAuth()
 
   const fetchEventos = async () => {
     try {
       const { data } = await calendarAPI.getAll({})
       setEventos(data)
-    } catch (err) { console.error(err) }
+    } catch (err) { }
     finally { setLoading(false) }
   }
 

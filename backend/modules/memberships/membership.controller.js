@@ -1,10 +1,11 @@
-const Membership = require('../../models/Membership');
-const MembershipHistory = require('../../models/MembershipHistory');
-const Client = require('../../models/Client');
-const User = require('../../models/User');
-const Payment = require('../../models/Payment');
+const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const Client = require('../../models/Cliente');
+const User = require('../../models/Usuario');
+const Payment = require('../../models/Pago');
 const Plan = require('../../models/Plan');
-const { createNotification, notifyAllByRole } = require('../../services/notificationService');
+const Settings = require('../../models/Configuracion');
+const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
 
 const calcularVencimiento = (tipo) => {
   const ahora = new Date();
@@ -23,8 +24,6 @@ const calcularVencimiento = (tipo) => {
       return new Date(ahora.setDate(ahora.getDate() + 1));
   }
 };
-
-const Settings = require('../../models/Settings');
 
 const PRECIOS_DEFAULTS = {
   Diaria: 10,

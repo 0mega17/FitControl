@@ -30,7 +30,7 @@ function MyRoutine() {
         ])
         setData(routineRes.data)
         if (planRes?.data) setPlan(planRes.data.plan)
-      } catch (err) { console.error(err) }
+      } catch (err) { }
       finally { setLoading(false) }
     }
     fetch()
