@@ -1,254 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-07-09T14:00:00.000Z" agent="FitControl" version="24.0.0">
-  <diagram name="Secuencia: Rutinas" id="seq-rutinas">
-    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1700" math="0" shadow="0">
+<mxfile host="app.diagrams.net">
+  <diagram name="Rutinas" id="seq-rutinas">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="800" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
-        <mxCell id="title" value="DIAGRAMA DE SECUENCIA — Creación y Asignación de Rutinas" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=17;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
-          <mxGeometry x="280" y="15" width="580" height="35" as="geometry"/>
+        <mxCell id="title" value="SECUENCIA — Creación y Asignación de Rutinas" style="text;html=1;align=center;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="500" height="35" as="geometry"/>
         </mxCell>
 
-        <!-- ACTORES -->
-        <mxCell id="a_trainer" value="Entrenador /&#xa;Administrador" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="20" y="60" width="90" height="950" as="geometry"/>
+        <mxCell id="l1" value="Entrenador" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="55" width="100" height="620" as="geometry"/>
         </mxCell>
-        <mxCell id="a_fe" value="Frontend&#xa;(RoutineBuilder)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="160" y="60" width="100" height="950" as="geometry"/>
+        <mxCell id="l2" value="Frontend (React)" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="240" y="55" width="120" height="620" as="geometry"/>
         </mxCell>
-        <mxCell id="a_exercisesvc" value="ExerciseService&#xa;(ExerciseDB API)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="310" y="60" width="110" height="950" as="geometry"/>
+        <mxCell id="l3" value="RoutinesController" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="440" y="55" width="130" height="620" as="geometry"/>
         </mxCell>
-        <mxCell id="a_ctrl" value="RoutinesController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="480" y="60" width="120" height="950" as="geometry"/>
-        </mxCell>
-        <mxCell id="a_models" value="Models&#xa;(Routine,&#xa;AssignedRoutine,&#xa;Client)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="660" y="60" width="100" height="950" as="geometry"/>
-        </mxCell>
-        <mxCell id="a_exercisedb" value="ExerciseDB&#xa;API (ext)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="830" y="60" width="90" height="950" as="geometry"/>
-        </mxCell>
-        <mxCell id="a_notif" value="NotificationService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="980" y="60" width="110" height="950" as="geometry"/>
+        <mxCell id="l4" value="MongoDB&#xa;(Models)" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="55" width="100" height="620" as="geometry"/>
         </mxCell>
 
-        <!-- =============================== -->
-        <!-- PARTE 1: BUSCAR EJERCICIOS -->
-        <!-- =============================== -->
-        <mxCell id="box1" value="Parte 1: Buscar Ejercicios en ExerciseDB (ExerciseLibrary)" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#b85450;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="105" width="920" height="160" as="geometry"/>
+        <!-- BUSCAR EJERCICIOS -->
+        <mxCell id="box1" value="Buscar ejercicios (ExerciseDB)" style="shape=frame;whiteSpace=wrap;html=1;startSize=20;fillColor=none;strokeColor=#b85450;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="100" width="780" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="m1" value="1. GET /api/exercises/ (con filtros)" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="300" y="140" as="sourcePoint"/><mxPoint x="505" y="140" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. GET ExerciseDB API + traducir EN→ES" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="505" y="175" as="sourcePoint"/><mxPoint x="710" y="175" as="targetPoint"/></mxGeometry>
         </mxCell>
 
-        <mxCell id="m1" value="1: Busca ejercicios (nombre, parte del cuerpo, equipo)" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="145" as="sourcePoint"/>
-            <mxPoint x="210" y="145" as="targetPoint"/>
-          </mxGeometry>
+        <!-- CONSTRUIR Y GUARDAR -->
+        <mxCell id="box2" value="Construir y guardar rutina" style="shape=frame;whiteSpace=wrap;html=1;startSize=20;fillColor=none;strokeColor=#82b366;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="230" width="780" height="130" as="geometry"/>
         </mxCell>
-        <mxCell id="m2" value="2: GET /api/exercises/?name=...&amp;bodyPart=..." style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="165" as="sourcePoint"/>
-            <mxPoint x="365" y="165" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m3" value="3. Selecciona ejercicios, configura series/reps" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="110" y="270" as="sourcePoint"/><mxPoint x="300" y="270" as="targetPoint"/></mxGeometry>
         </mxCell>
-
-        <mxCell id="act_ex" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="345" y="160" width="30" height="65" as="geometry"/>
+        <mxCell id="m4" value="4. POST /api/routines/ {nombre, nivel, objetivo, ejercicios[]}" style="html=1;endArrow=classic;fontSize=11;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="300" y="310" as="sourcePoint"/><mxPoint x="505" y="310" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. Routine.create()" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="505" y="340" as="sourcePoint"/><mxPoint x="710" y="340" as="targetPoint"/></mxGeometry>
         </mxCell>
 
-        <mxCell id="m3" value="3: ExerciseService.listExercises({bodyParts, ...})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="365" y="190" as="sourcePoint"/>
-            <mxPoint x="875" y="190" as="targetPoint"/>
-          </mxGeometry>
+        <!-- ASIGNAR A CLIENTE -->
+        <mxCell id="box3" value="Asignar rutina a cliente" style="shape=frame;whiteSpace=wrap;html=1;startSize=20;fillColor=none;strokeColor=#9673a6;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="380" width="780" height="170" as="geometry"/>
         </mxCell>
-        <mxCell id="m4" value="4: GET oss.exercisedb.dev/api/v1/exercises" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontColor=#b85450;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="365" y="205" as="sourcePoint"/>
-            <mxPoint x="875" y="205" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m6" value="6. Selecciona cliente del dropdown" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="110" y="420" as="sourcePoint"/><mxPoint x="300" y="420" as="targetPoint"/></mxGeometry>
         </mxCell>
-        <mxCell id="m5" value="5: [{id, name, bodyPart, target, gifUrl, equipment}]" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#b85450;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="875" y="220" as="sourcePoint"/>
-            <mxPoint x="365" y="220" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m7" value="7. POST /api/routines/:id/assign {clienteId}" style="html=1;endArrow=classic;fontSize=11;fontStyle=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="300" y="460" as="sourcePoint"/><mxPoint x="505" y="460" as="targetPoint"/></mxGeometry>
         </mxCell>
-        <mxCell id="m6" value="6: translateExercises(exercises) → EN→ES" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontColor=#b85450;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="365" y="235" as="sourcePoint"/>
-            <mxPoint x="310" y="235" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m8" value="8. AssignedRoutine.create({rutina, cliente, asignadoPor})" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="505" y="500" as="sourcePoint"/><mxPoint x="710" y="500" as="targetPoint"/></mxGeometry>
         </mxCell>
-        <mxCell id="m7" value="7: Ejercicios traducidos al español" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="365" y="250" as="sourcePoint"/>
-            <mxPoint x="210" y="250" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m9" value="9. Notificar a cliente" style="html=1;endArrow=classic;fontSize=11;fontColor=#b85450;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="505" y="535" as="sourcePoint"/><mxPoint x="505" y="535" as="targetPoint"/></mxGeometry>
         </mxCell>
 
-        <!-- =============================== -->
-        <!-- PARTE 2: CONSTRUIR RUTINA -->
-        <!-- =============================== -->
-        <mxCell id="box2" value="Parte 2: Construir Rutina (RoutineConstructor)" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#82b366;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="290" width="350" height="130" as="geometry"/>
+        <!-- CLIENTE CONSULTA -->
+        <mxCell id="box4" value="Cliente consulta su rutina" style="shape=frame;whiteSpace=wrap;html=1;startSize=20;fillColor=none;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="570" width="780" height="80" as="geometry"/>
         </mxCell>
-
-        <mxCell id="m10" value="8: Arrastra ejercicios al constructor" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="330" as="sourcePoint"/>
-            <mxPoint x="210" y="330" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m11" value="9: Configura: series, reps, descanso, observaciones" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="350" as="sourcePoint"/>
-            <mxPoint x="210" y="350" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m12" value="10: Define: nombre, nivel, objetivo, grupo muscular" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="370" as="sourcePoint"/>
-            <mxPoint x="210" y="370" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m13" value="11: Click 'Guardar Rutina'" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontStyle=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="400" as="sourcePoint"/>
-            <mxPoint x="210" y="400" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- =============================== -->
-        <!-- PARTE 3: GUARDAR RUTINA -->
-        <!-- =============================== -->
-        <mxCell id="box3" value="Parte 3: Guardar Rutina en Base de Datos" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#d6b656;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="440" width="840" height="130" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="m20" value="12: POST /api/routines/ {nombre, nivel, objetivo, ejercicios[], ...}" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontStyle=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="480" as="sourcePoint"/>
-            <mxPoint x="540" y="480" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="act_ctrl1" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="520" y="475" width="30" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="m21" value="13: Routine.create({nombre, nivel, objetivo, ejercicios, creadoPor})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="505" as="sourcePoint"/>
-            <mxPoint x="710" y="505" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="note1" value="ejercicios = [{&#xa;  idExerciseDB, nombre,&#xa;  gifUrl, series,&#xa;  repeticiones, descanso,&#xa;  orden, observaciones&#xa;}]" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="720" y="490" width="140" height="80" as="geometry"/>
-        </mxCell>
-        <mxCell id="m22" value="14: {routine, msg: 'Rutina creada'}" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="540" as="sourcePoint"/>
-            <mxPoint x="210" y="540" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- =============================== -->
-        <!-- PARTE 4: ASIGNAR A CLIENTE -->
-        <!-- =============================== -->
-        <mxCell id="box4" value="Parte 4: Asignar Rutina a un Cliente" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#9673a6;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="590" width="840" height="220" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="m30" value="15: GET /api/routines/clients/list" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="625" as="sourcePoint"/>
-            <mxPoint x="540" y="625" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m31" value="16: Client.find().populate('usuario')" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="645" as="sourcePoint"/>
-            <mxPoint x="710" y="645" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m32" value="17: Lista de clientes" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#9673a6;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="710" y="660" as="sourcePoint"/>
-            <mxPoint x="540" y="660" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m33" value="18: Selecciona cliente del dropdown" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="65" y="680" as="sourcePoint"/>
-            <mxPoint x="210" y="680" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m34" value="19: POST /api/routines/:id/assign {clienteId}" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontStyle=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="710" as="sourcePoint"/>
-            <mxPoint x="540" y="710" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="act_ctrl2" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="520" y="705" width="30" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="m35" value="20: Desactiva rutinas anteriores del cliente" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="730" as="sourcePoint"/>
-            <mxPoint x="710" y="730" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m36" value="21: AssignedRoutine.create({rutina, cliente, asignadoPor})" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="750" as="sourcePoint"/>
-            <mxPoint x="710" y="750" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m37" value="22: notifyAdminsAndTrainers('Rutina asignada')" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;fontColor=#b85450;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="770" as="sourcePoint"/>
-            <mxPoint x="1035" y="770" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m38" value="23: {success, msg: 'Rutina asignada'}" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="795" as="sourcePoint"/>
-            <mxPoint x="210" y="795" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- =============================== -->
-        <!-- PARTE 5: CLIENTE VE SU RUTINA -->
-        <!-- =============================== -->
-        <mxCell id="box5" value="Parte 5: Cliente Consulta su Rutina Asignada" style="shape=frame;whiteSpace=wrap;html=1;startSize=22;fillColor=none;strokeColor=#dae8fc;fontSize=11;fontStyle=1;rounded=1;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="15" y="840" width="840" height="120" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="a_client" value="Cliente" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1060" y="860" width="80" height="80" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="m40" value="24: GET /api/routines/my-routine" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1100" y="900" as="sourcePoint"/>
-            <mxPoint x="540" y="900" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m41" value="25: AssignedRoutine.findOne({cliente, estado:'activa'}).populate('rutina')" style="html=1;verticalAlign=bottom;endArrow=classic;fontSize=10;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="540" y="920" as="sourcePoint"/>
-            <mxPoint x="710" y="920" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m42" value="26: Rutina completa con ejercicios y GIFs" style="html=1;verticalAlign=bottom;endArrow=open;fontSize=10;fontColor=#82b366;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="710" y="940" as="sourcePoint"/>
-            <mxPoint x="1100" y="940" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m10" value="10. GET /api/routines/my-routine → AssignedRoutine.populate('rutina')" style="html=1;endArrow=classic;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="505" y="610" as="sourcePoint"/><mxPoint x="710" y="610" as="targetPoint"/></mxGeometry>
         </mxCell>
 
       </root>
