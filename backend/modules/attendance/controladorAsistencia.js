@@ -3,6 +3,14 @@ const Attendance = require('../../models/Asistencia');
 const Client = require('../../models/Cliente');
 const Membership = require('../../models/Membresia');
 
+/**
+ * @description Genera un token QR para registro de asistencia del cliente autenticado.
+ *              Verifica membresía activa antes de generar.
+ * @route POST /api/attendance/generate-qr
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const generateQR = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -20,6 +28,13 @@ const generateQR = async (req, res) => {
   }
 };
 
+/**
+ * @description Registra asistencia del cliente mediante datos QR escaneados.
+ * @route POST /api/attendance/qr
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const registerByQR = async (req, res) => {
   try {
     const { qrData } = req.body;
@@ -37,6 +52,13 @@ const registerByQR = async (req, res) => {
   }
 };
 
+/**
+ * @description Registra asistencia manualmente por ID de cliente (admin/entrenador).
+ * @route POST /api/attendance/manual
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const registerManual = async (req, res) => {
   try {
     const { clienteId } = req.body;
@@ -52,6 +74,13 @@ const registerManual = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene las últimas 30 asistencias del cliente autenticado.
+ * @route GET /api/attendance/my
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getByClient = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -63,6 +92,13 @@ const getByClient = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las asistencias con filtro opcional por fecha.
+ * @route GET /api/attendance
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const { fecha } = req.query;

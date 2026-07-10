@@ -7,6 +7,11 @@ const Trainer = require('./models/Entrenador');
 
 dotenv.config();
 
+/**
+ * @description Script de seed: conecta a MongoDB, crea roles,
+ *              usuario administrador, entrenador y cliente de prueba.
+ * @returns {Promise<void>}
+ */
 const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
