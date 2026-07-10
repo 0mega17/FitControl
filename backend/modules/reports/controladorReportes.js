@@ -4,6 +4,14 @@ const Membership = require('../../models/Membresia');
 const Payment = require('../../models/Pago');
 const Attendance = require('../../models/Asistencia');
 
+/**
+ * @description Genera un reporte con estadísticas de ingresos, asistencias,
+ *              membresías vendidas y distribución por tipo en un período.
+ * @route GET /api/reports
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getReport = async (req, res) => {
   try {
     const { tipo, desde, hasta } = req.query;
@@ -45,6 +53,14 @@ const getReport = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene estadísticas completas del dashboard: clientes, entrenadores,
+ *              membresías (activas/por vencer/vencidas), asistencias del día e ingresos del mes.
+ * @route GET /api/reports/dashboard
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getDashboardStats = async (req, res) => {
   try {
     const rolCliente = await Role.findOne({ nombre: 'Cliente' });
