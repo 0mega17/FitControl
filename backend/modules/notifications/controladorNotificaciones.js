@@ -1,5 +1,12 @@
 ﻿const Notification = require('../../models/Notificacion');
 
+/**
+ * @description Crea una notificación directa en el sistema.
+ * @route POST /api/notifications
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const create = async (req, res) => {
   try {
     const notificacion = await Notification.create(req.body);
@@ -9,6 +16,13 @@ const create = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene las últimas 50 notificaciones del usuario autenticado.
+ * @route GET /api/notifications/my
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMyNotifications = async (req, res) => {
   try {
     const notis = await Notification.find({ usuario: req.user._id })
@@ -19,6 +33,13 @@ const getMyNotifications = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las notificaciones del sistema (admin).
+ * @route GET /api/notifications
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const notis = await Notification.find()
@@ -30,6 +51,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Marca una notificación como leída por ID.
+ * @route PUT /api/notifications/:id/read
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const markAsRead = async (req, res) => {
   try {
     const noti = await Notification.findByIdAndUpdate(req.params.id, { leida: true }, { new: true });
@@ -40,6 +68,13 @@ const markAsRead = async (req, res) => {
   }
 };
 
+/**
+ * @description Marca todas las notificaciones del usuario como leídas.
+ * @route PUT /api/notifications/read-all
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany({ usuario: req.user._id, leida: false }, { leida: true });
@@ -49,6 +84,13 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene el número de notificaciones no leídas del usuario.
+ * @route GET /api/notifications/unread-count
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getUnreadCount = async (req, res) => {
   try {
     const count = await Notification.countDocuments({ usuario: req.user._id, leida: false });
@@ -58,6 +100,13 @@ const getUnreadCount = async (req, res) => {
   }
 };
 
+/**
+ * @description Envía un email de prueba (simulado).
+ * @route POST /api/notifications/test-email
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const sendTestEmail = async (req, res) => {
   try {
     const { email, asunto, mensaje } = req.body;
@@ -68,6 +117,13 @@ const sendTestEmail = async (req, res) => {
   }
 };
 
+/**
+ * @description Envía un WhatsApp de prueba (simulado).
+ * @route POST /api/notifications/test-whatsapp
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const sendTestWhatsApp = async (req, res) => {
   try {
     const { telefono, mensaje } = req.body;

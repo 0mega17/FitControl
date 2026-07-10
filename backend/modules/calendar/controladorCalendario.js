@@ -2,6 +2,13 @@
 const Trainer = require('../../models/Entrenador');
 const Client = require('../../models/Cliente');
 
+/**
+ * @description Crea un evento en el calendario de entrenamiento (solo entrenadores).
+ * @route POST /api/calendar
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const create = async (req, res) => {
   try {
     const entrenador = await Trainer.findOne({ usuario: req.user._id });
@@ -13,6 +20,14 @@ const create = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene eventos del calendario con filtros por mes, año y entrenador.
+ *              Filtra automáticamente según el rol del usuario autenticado.
+ * @route GET /api/calendar
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const { mes, año, entrenadorId } = req.query;
@@ -39,6 +54,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza un evento del calendario por ID.
+ * @route PUT /api/calendar/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const update = async (req, res) => {
   try {
     const evento = await WorkoutCalendar.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,6 +71,13 @@ const update = async (req, res) => {
   }
 };
 
+/**
+ * @description Elimina un evento del calendario por ID.
+ * @route DELETE /api/calendar/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const remove = async (req, res) => {
   try {
     await WorkoutCalendar.findByIdAndDelete(req.params.id);
