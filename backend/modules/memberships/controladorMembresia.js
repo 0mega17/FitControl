@@ -6,6 +6,13 @@ const Payment = require('../../models/Payment');
 const Plan = require('../../models/Plan');
 const { createNotification, notifyAllByRole } = require('../../services/notificationService');
 
+const Settings = require('../../models/Settings');
+
+/**
+ * @description Calcula la fecha de vencimiento según el tipo de membresía.
+ * @param {'Diaria'|'Semanal'|'Mensual'|'Trimestral'|'Anual'} tipo
+ * @returns {Date}
+ */
 const calcularVencimiento = (tipo) => {
   const ahora = new Date();
   switch (tipo) {
@@ -43,6 +50,14 @@ const obtenerPrecios = async () => {
   }
 };
 
+/**
+ * @description Crea una membresía y un pago asociado para un cliente por email.
+ *              Verifica que no tenga una membresía activa previa.
+ * @route POST /api/memberships
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const createMembership = async (req, res) => {
   try {
     const { tipo, clienteEmail, metodoPago } = req.body;
@@ -90,6 +105,13 @@ const createMembership = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las membresías con datos del cliente.
+ * @route GET /api/memberships
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const membresias = await Membership.find()
@@ -101,6 +123,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las membresías activas ordenadas por vencimiento.
+ * @route GET /api/memberships/active
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getActive = async (req, res) => {
   try {
     const membresias = await Membership.find({ estado: 'activa' })
@@ -112,6 +141,13 @@ const getActive = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las membresías vencidas.
+ * @route GET /api/memberships/expired
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getExpired = async (req, res) => {
   try {
     const membresias = await Membership.find({ estado: 'vencida' })
@@ -123,6 +159,14 @@ const getExpired = async (req, res) => {
   }
 };
 
+/**
+ * @description Genera un semáforo de membresías: verde (vigente), amarillo (vence ≤7d), rojo (vencida).
+ *              Actualiza membresías vencidas automáticamente.
+ * @route GET /api/memberships/semaforo
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getSemaforo = async (req, res) => {
   try {
     await Membership.updateMany(
@@ -160,6 +204,13 @@ const PLAN_MAP = {
   Anual: 'Premium'
 };
 
+/**
+ * @description Obtiene el plan activo del cliente autenticado (mapeo simple).
+ * @route GET /api/memberships/my-plan
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMyPlan = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -181,6 +232,13 @@ const getMyPlan = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene las membresías y pagos del cliente autenticado.
+ * @route GET /api/memberships/my
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMyMemberships = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -199,6 +257,13 @@ const getMyMemberships = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene los precios configurados para cada tipo de membresía.
+ * @route GET /api/memberships/prices
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getPrices = async (req, res) => {
   try {
     const precios = await obtenerPrecios();
@@ -208,6 +273,14 @@ const getPrices = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza los precios de membresías (solo administradores).
+ *              Valida tipos y precios positivos.
+ * @route PUT /api/memberships/prices
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const updatePrices = async (req, res) => {
   try {
     const precios = req.body;
@@ -235,6 +308,13 @@ const updatePrices = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza tipo, precio y/o estado de una membresía por ID.
+ * @route PUT /api/memberships/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const updateMembership = async (req, res) => {
   try {
     const { tipo, precio, estado } = req.body;
@@ -255,6 +335,13 @@ const updateMembership = async (req, res) => {
   }
 };
 
+/**
+ * @description Renueva una membresía existente y registra el pago asociado.
+ * @route PUT /api/memberships/:id/renew
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const renewMembership = async (req, res) => {
   try {
     const membresia = await Membership.findById(req.params.id);
@@ -283,6 +370,13 @@ const renewMembership = async (req, res) => {
   }
 };
 
+/**
+ * @description Cancela una membresía por ID cambiando su estado a 'cancelada'.
+ * @route PUT /api/memberships/:id/cancel
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const cancelMembership = async (req, res) => {
   try {
     const membresia = await Membership.findById(req.params.id);
@@ -297,6 +391,14 @@ const cancelMembership = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene el plan activo del cliente con info detallada del plan
+ *              e historial de cambios de membresía.
+ * @route GET /api/memberships/my-plan-enhanced
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMyPlanEnhanced = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -331,6 +433,14 @@ const getMyPlanEnhanced = async (req, res) => {
   }
 };
 
+/**
+ * @description Cambia el plan de membresía del cliente autenticado.
+ *              Crea nueva membresía, registra pago y completa la anterior.
+ * @route PUT /api/memberships/change-plan
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const changePlan = async (req, res) => {
   try {
     const { planId } = req.body;
@@ -397,6 +507,13 @@ const changePlan = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene el historial de cambios de plan del cliente autenticado.
+ * @route GET /api/memberships/history
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getMembershipHistory = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });

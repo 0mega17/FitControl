@@ -9,4 +9,5 @@ const assignedRoutineSchema = new mongoose.Schema({
 
 assignedRoutineSchema.index({ cliente: 1, estado: 1 });
 
+/** @description Modelo de rutinas asignadas a clientes con control de estado */
 module.exports = mongoose.model('AssignedRoutine', assignedRoutineSchema);

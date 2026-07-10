@@ -1,5 +1,13 @@
 const { validationResult } = require('express-validator');
 
+/**
+ * @description Middleware de validación: verifica errores de express-validator
+ *              y retorna un array con los mensajes de error si existen.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns {void}
+ */
 const validateFields = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
