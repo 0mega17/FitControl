@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/servicioTraduccion.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/servicioTraduccion.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const axios = require('axios');
+const cache = new Map();
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+
+const DICT = new Map([
+  // --- Body Parts ---
+  ['back', 'espalda'],
+  ['chest', 'pecho'],
+  ['shoulders', 'hombros'],
+  ['upper arms', 'brazos superiores'],
+  ['lower arms', 'antebrazos'],
+  ['upper legs', 'piernas superiores'],
+  ['lower legs', 'piernas inferiores'],
+  ['waist', 'cintura'],
+  ['cardio', 'cardio'],
+  ['neck', 'cuello'],
+  ['chest', 'pecho'],
+  ['shoulders', 'hombros'],
+  // --- Target Muscles ---
+  ['pectorals', 'pectorales'],
+  ['spine', 'columna'],
+  ['abs', 'abdominales'],
+  ['triceps', 'tríceps'],
+  ['biceps', 'bíceps'],
+  ['shoulders', 'hombros'],
+  ['delts', 'deltoides'],
+  ['deltoids', 'deltoides'],
+  ['lats', 'dorsales'],
+  ['glutes', 'glúteos'],
+  ['calves', 'gemelos'],
+  ['hamstrings', 'isquiotibiales'],
+  ['quadriceps', 'cuádriceps'],
+  ['cardiovascular system', 'sistema cardiovascular'],
+  ['core', 'core'],
+  ['forearms', 'antebrazos'],
+  ['hip flexors', 'flexores de cadera'],
+  ['ankles', 'tobillos'],
+  ['feet', 'pies'],
+  ['spine', 'columna vertebral'],
+  ['upper back', 'espalda alta'],
+  ['lower back', 'espalda baja'],
+  // --- Equipment ---
+  ['body weight', 'peso corporal'],
+  ['barbell', 'barra'],
+  ['dumbbell', 'mancuerna'],
+  ['cable', 'polea'],
+  ['band', 'banda elástica'],
+  ['kettlebell', 'pesa rusa'],
+  ['medicine ball', 'balón medicinal'],
+  ['ez barbell', 'barra ez'],
+  ['assisted', 'asistido'],
+  ['machine', 'máquina'],
+  ['rope', 'cuerda'],
+  ['foam roll', 'rodillo de espuma'],
+  ['stability ball', 'pelota de estabilidad'],
+  ['trap bar', 'barra hexagonal'],
+  ['lever', 'palanca'],
+  ['sled', 'trineo'],
+  ['bench', 'banco'],
+  ['step', 'escalón'],
+  ['wheel', 'rueda'],
+  // --- Common Exercise Names ---
+  ['press', 'press'],
+  ['push', 'empuje'],
+  ['pull', 'jalón'],
+  ['raise', 'elevación'],
+  ['curl', 'curl'],
+  ['extension', 'extensión'],
+  ['squat', 'sentadilla'],
+  ['deadlift', 'peso muerto'],
+  ['bench press', 'press de banca'],
+  ['overhead press', 'press militar'],
+  ['shoulder press', 'press de hombros'],
+  ['leg press', 'prensa de piernas'],
+  ['lunge', 'zancada'],
+  ['row', 'remo'],
+  ['pulldown', 'jalón al pecho'],
+  ['pull-up', 'dominada'],
+  ['push-up', 'flexión'],
+  ['dip', 'fondo'],
+  ['crunch', 'abdominal'],
+  ['sit-up', 'abdominal'],
+  ['plank', 'plancha'],
+  ['bridge', 'puente'],
+  ['fly', 'apertura'],
+  ['crossover', 'cruce'],
+  ['swing', 'balanceo'],
+  ['snatch', 'arrancada'],
+  ['clean', 'cargada'],
+  ['jerk', 'envión'],
+  ['lateral raise', 'elevación lateral'],
+  ['front raise', 'elevación frontal'],
+  ['bent over', 'inclinado'],
+  ['seated', 'sentado'],
+  ['standing', 'de pie'],
+  ['lying', 'acostado'],
+  ['incline', 'inclinado'],
+  ['decline', 'declinado'],
+  ['reverse', 'inverso'],
+  ['concentration', 'concentración'],
+  ['hammer', 'martillo'],
+  ['preacher', 'predicador'],
+  ['triceps pushdown', 'extensión de tríceps'],
+  ['skull crusher', 'rompe cráneos'],
+  ['face pull', 'jalón facial'],
+  ['shrug', 'encogimiento'],
+  ['calf raise', 'elevación de gemelos'],
+  ['leg curl', 'curl de piernas'],
+  ['leg extension', 'extensión de piernas'],
+  ['hip thrust', 'empuje de cadera'],
+  ['glute bridge', 'puente de glúteos'],
+  ['step-up', 'subida al banco'],
+  ['box jump', 'salto al cajón'],
+  ['burpee', 'burpee'],
+  ['jumping jack', 'salto de tijera'],
+  ['mountain climber', 'escalador'],
+  ['russian twist', 'giro ruso'],
+  ['bicycle', 'bicicleta'],
+  ['leg raise', 'elevación de piernas'],
+  ['hanging knee raise', 'elevación de rodillas colgado'],
+  ['dumbbell', 'mancuerna'],
+  ['kettlebell', 'pesa rusa'],
+  ['barbell', 'barra'],
+  ['cable', 'polea'],
+  ['band', 'banda'],
+  ['ez bar', 'barra ez'],
+  ['olympic', 'olímpico'],
+  ['barbell', 'barra'],
+  ['upward facing dog', 'perro boca arriba'],
+  ['downward facing dog', 'perro boca abajo'],
+  ['child pose', 'postura del niño'],
+  ['cat pose', 'postura del gato'],
+  ['cobra', 'cobra'],
+  ['bird dog', 'pájaro-perro'],
+  // --- Difficulty ---
+  ['beginner', 'principiante'],
+  ['intermediate', 'intermedio'],
+  ['advanced', 'avanzado'],
+  ['expert', 'experto'],
+  // --- Misc ---
+  ['up', 'arriba'],
+  ['down', 'abajo'],
+  ['left', 'izquierda'],
+  ['right', 'derecha'],
+  ['front', 'frontal'],
+  ['side', 'lateral'],
+  ['alternating', 'alternado'],
+  ['single leg', 'una pierna'],
+  ['one arm', 'un brazo'],
+  ['two arm', 'dos brazos'],
+  ['close grip', 'agarre cerrado'],
+  ['wide grip', 'agarre abierto'],
+  ['underhand', 'supino'],
+  ['overhand', 'pronado'],
+  ['neutral grip', 'agarre neutro'],
+  ['palms facing', 'palmas hacia'],
+  ['thumbs', 'pulgares'],
+  ['flat', 'plano'],
+  ['variation', 'variación'],
+  ['isometric', 'isométrico'],
+  ['rotation', 'rotación'],
+  ['twist', 'giro'],
+  ['hop', 'salto'],
+  ['kick', 'patada'],
+  ['step', 'paso'],
+  ['jump', 'salto'],
+  ['hold', 'sostén'],
+  ['pause', 'pausa'],
+  ['slow', 'lento'],
+  ['fast', 'rápido'],
+  ['explosive', 'explosivo'],
+  ['controlled', 'controlado'],
+  ['assisted', 'asistido'],
+  ['weighted', 'con peso'],
+  ['bodyweight', 'peso corporal'],
+  ['impossible', 'imposible'],
+  ['inside', 'interno'],
+  ['outside', 'externo'],
+  ['cross-over', 'cruce'],
+  ['french press', 'press francés'],
+  ['bradford rocky press', 'press bradford'],
+  ['bradford press', 'press bradford'],
+  ['rocky press', 'press rocky'],
+  ['wipers', 'limpiaparabrisas'],
+  ['burpee', 'burpee'],
+  ['jack', 'tijera'],
+  ['climber', 'escalador'],
+  ['wrist', 'muñeca'],
+  ['ankle', 'tobillo'],
+  ['hip', 'cadera'],
+  ['knee', 'rodilla'],
+  ['elbow', 'codo'],
+  ['shoulder', 'hombro'],
+  ['wrist', 'muñeca'],
+  ['neck', 'cuello'],
+  ['head', 'cabeza'],
+  ['feet', 'pies'],
+  ['foot', 'pie'],
+  ['hand', 'mano'],
+  ['hands', 'manos'],
+  ['arm', 'brazo'],
+  ['arms', 'brazos'],
+  ['leg', 'pierna'],
+  ['legs', 'piernas'],
+  ['chest', 'pecho'],
+  ['back', 'espalda'],
+  ['ab', 'abdominal'],
+  ['abs', 'abdominales'],
+  ['core', 'core'],
+  ['glute', 'glúteo'],
+  ['glutes', 'glúteos'],
+  ['quad', 'cuádriceps'],
+  ['hamstring', 'isquiotibial'],
+  ['calf', 'gemelo'],
+  ['tricep', 'tríceps'],
+  ['bicep', 'bíceps'],
+  ['deltoid', 'deltoides'],
+  ['lat', 'dorsal'],
+  ['trap', 'trapecio'],
+  ['pec', 'pectoral'],
+  ['pecs', 'pectorales'],
+  ['torso', 'torso'],
+  ['thigh', 'muslo'],
+  ['thighs', 'muslos'],
+  ['shin', 'espinilla'],
+  ['heel', 'talón'],
+  ['toe', 'dedo del pie'],
+  ['finger', 'dedo'],
+  ['palm', 'palma'],
+  ['grip', 'agarre'],
+  ['bar', 'barra'],
+  ['weight', 'peso'],
+  ['weights', 'pesas'],
+  ['plate', 'disco'],
+  ['collar', 'seguro'],
+  ['bench', 'banco'],
+  ['rack', 'rack'],
+  ['cage', 'jaula'],
+  ['mat', 'colchoneta'],
+  ['towel', 'toalla'],
+  ['strap', 'correa'],
+  ['belt', 'cinturón'],
+  ['glove', 'guante'],
+  ['chalk', 'magnesio'],
+  ['water', 'agua'],
+  ['rest', 'descanso'],
+  ['set', 'serie'],
+  ['rep', 'repetición'],
+  ['reps', 'repeticiones'],
+  ['warm-up', 'calentamiento'],
+  ['cool-down', 'enfriamiento'],
+  ['stretch', 'estiramiento'],
+  ['stretching', 'estiramiento'],
+  ['mobility', 'movilidad'],
+  ['flexibility', 'flexibilidad'],
+  ['strength', 'fuerza'],
+  ['power', 'potencia'],
+  ['endurance', 'resistencia'],
+  ['hypertrophy', 'hipertrofia'],
+  ['circuit', 'circuito'],
+  ['superset', 'superserie'],
+  ['dropset', 'serie descendente'],
+  ['pyramid', 'pirámide'],
+  ['giant set', 'serie gigante'],
+  ['AMRAP', 'AMRAP'],
+  ['EMOM', 'EMOM'],
+  ['HIIT', 'HIIT'],
+  ['LISS', 'LISS'],
+  ['cardio', 'cardio'],
+  ['aerobic', 'aeróbico'],
+  ['anaerobic', 'anaeróbico'],
+  ['spot', 'lugar'],
+  ['machine', 'máquina'],
+  ['treadmill', 'cinta'],
+  ['bike', 'bicicleta'],
+  ['elliptical', 'elíptica'],
+  ['rower', 'remo'],
+  ['stairmaster', 'escaladora'],
+  ['ladder', 'escalera'],
+  ['battling ropes', 'cuerdas de batalla'],
+  ['battle ropes', 'cuerdas de batalla'],
+  ['slam ball', 'balón de slam'],
+  ['wall ball', 'balón al muro'],
+  ['med ball', 'balón medicinal'],
+  ['plyo', 'pliométrico'],
+  ['plyometric', 'pliométrico'],
+  ['iso', 'isométrico'],
+  ['eccentric', 'excéntrico'],
+  ['concentric', 'concéntrico'],
+  ['tempo', 'tempo'],
+  ['rhythm', 'ritmo'],
+  ['form', 'técnica'],
+  ['technique', 'técnica'],
+  ['posture', 'postura'],
+  ['align', 'alinear'],
+  ['engage', 'contraer'],
+  ['contract', 'contraer'],
+  ['squeeze', 'apretar'],
+  ['brace', 'fijar'],
+  ['breathe', 'respirar'],
+  ['inhale', 'inhalar'],
+  ['exhale', 'exhalar'],
+  ['lift', 'levantar'],
+  ['lower', 'bajar'],
+  ['extend', 'extender'],
+  ['flex', 'flexionar'],
+  ['rotate', 'rotar'],
+  ['pull', 'jalar'],
+  ['push', 'empujar'],
+  ['press', 'presionar'],
+  ['drive', 'impulsar'],
+  ['explode', 'explotar'],
+  ['control', 'controlar'],
+  ['balance', 'equilibrar'],
+  ['stabilize', 'estabilizar'],
+  ['repeat', 'repetir'],
+  ['continue', 'continuar'],
+  ['finish', 'terminar'],
+  ['start', 'empezar'],
+  ['starting position', 'posición inicial'],
+  ['begin', 'comenzar'],
+  ['step', 'paso'],
+  ['Step', 'Paso'],
+  // --- Common Instruction Phrases ---
+  ['lie flat on a bench with your feet flat on the ground', 'acuéstate boca arriba en un banco con los pies apoyados en el suelo'],
+  ['lie face down on the floor with your legs extended behind you', 'acuéstate boca abajo en el suelo con las piernas extendidas detrás de ti'],
+  ['stand with your feet shoulder-width apart', 'ponte de pie con los pies al ancho de los hombros'],
+  ['stand up straight with your feet shoulder-width apart', 'ponte derecho con los pies al ancho de los hombros'],
+  ['sit on a bench with your back straight and feet flat on the ground', 'siéntate en un banco con la espalda recta y los pies en el suelo'],
+  ['grasp the barbell with an overhand grip', 'agarra la barra con un agarre pronado'],
+  ['hold the dumbbell in each hand', 'sostén una mancuerna en cada mano'],
+  ['hold a dumbbell in each hand', 'sostén una mancuerna en cada mano'],
+  ['keep your back straight and your core engaged', 'mantén la espalda recta y el core contraído'],
+  ['keeping your back straight and your core engaged', 'manteniendo la espalda recta y el core contraído'],
+  ['engage your core', 'contrae tu core'],
+  ['engage your core muscles', 'contrae los músculos del core'],
+  ['slowly lower', 'baja lentamente'],
+  ['slowly raise', 'eleva lentamente'],
+  ['slowly return', 'regresa lentamente'],
+  ['pause for a moment', 'haz una pausa'],
+  ['pause for a moment at the top', 'haz una pausa en la parte superior'],
+  ['pause for a moment at the bottom', 'haz una pausa en la parte inferior'],
+  ['repeat for the desired number of repetitions', 'repite el número deseado de repeticiones'],
+  ['repeat for the desired number of reps', 'repite el número deseado de repeticiones'],
+  ['lower your body', 'baja tu cuerpo'],
+  ['lift your', 'levanta tu'],
+  ['raise your', 'eleva tu'],
+  ['extend your arms', 'extiende tus brazos'],
+  ['extend your legs', 'extiende tus piernas'],
+  ['bend your elbows', 'dobla tus codos'],
+  ['bend your knees', 'dobla tus rodillas'],
+  ['keep your arms straight', 'mantén tus brazos rectos'],
+  ['keep your legs straight', 'mantén tus piernas rectas'],
+  ['keep your elbows slightly bent', 'mantén tus codos ligeramente doblados'],
+  ['place your hands on the floor', 'coloca tus manos en el suelo'],
+  ['place your hands', 'coloca tus manos'],
+  ['place your feet', 'coloca tus pies'],
+  ['press your hands', 'presiona tus manos'],
+  ['push through your heels', 'impulsa a través de tus talones'],
+  ['drive through your heels', 'impulsa a través de tus talones'],
+  ['squeeze your shoulder blades', 'aprieta tus omóplatos'],
+  ['squeeze your glutes', 'aprieta tus glúteos'],
+  ['roll your shoulders back', 'gira tus hombros hacia atrás'],
+  ['look straight ahead', 'mira al frente'],
+  ['keep your head in a neutral position', 'mantén tu cabeza en posición neutral'],
+  ['keep your body in a straight line', 'mantén tu cuerpo en línea recta'],
+  ['keep your torso upright', 'mantén tu torso erguido'],
+  ['keep your chest up', 'mantén el pecho arriba'],
+  ['keep your core tight', 'mantén el core apretado'],
+  ['breathe out as you', 'exhala mientras'],
+  ['inhale as you', 'inhala mientras'],
+  ['exhale as you', 'exhala mientras'],
+  ['hold this position', 'mantén esta posición'],
+  ['return to the starting position', 'regresa a la posición inicial'],
+  ['return to start', 'regresa al inicio'],
+  ['lower the weight', 'baja el peso'],
+  ['lower the barbell', 'baja la barra'],
+  ['lower the dumbbells', 'baja las mancuernas'],
+  ['lift the barbell', 'levanta la barra'],
+  ['lift the weight', 'levanta el peso'],
+  ['raise the dumbbells', 'eleva las mancuernas'],
+  ['raise the barbell', 'eleva la barra'],
+  ['push the barbell', 'empuja la barra'],
+  ['pull the bar', 'jala la barra'],
+  ['pull the band', 'jala la banda'],
+  ['step forward', 'da un paso adelante'],
+  ['step backward', 'da un paso atrás'],
+  ['step back', 'da un paso atrás'],
+  ['switch legs', 'cambia de pierna'],
+  ['switch sides', 'cambia de lado'],
+  ['alternate legs', 'alterna las piernas'],
+  ['alternate arms', 'alterna los brazos'],
+  ['keep your upper arms stationary', 'mantén tus brazos superiores quietos'],
+  ['keep your upper arms close to your head', 'mantén tus brazos superiores cerca de tu cabeza'],
+  ['keep your elbows close to your body', 'mantén tus codos cerca de tu cuerpo'],
+  ['raise your heels', 'eleva tus talones'],
+  ['lower your heels', 'baja tus talones'],
+  ['lift your knees', 'eleva tus rodillas'],
+  ['lift one leg', 'levanta una pierna'],
+  ['lift both legs', 'levanta ambas piernas'],
+  ['cross your ankles', 'cruza tus tobillos'],
+  ['jump your feet back', 'salta con los pies hacia atrás'],
+  ['jump your feet forward', 'salta con los pies hacia adelante'],
+  ['kick your feet back', 'lleva los pies hacia atrás'],
+  ['land softly', 'aterriza suavemente'],
+  ['start in a push-up position', 'comienza en posición de flexión'],
+  ['start in a standing position', 'comienza de pie'],
+  ['start on your hands and knees', 'comienza sobre manos y rodillas'],
+  ['lie on your back', 'acuéstate boca arriba'],
+  ['lie on your side', 'acuéstate de lado'],
+  ['lie face down', 'acuéstate boca abajo'],
+  ['sit on the floor', 'siéntate en el suelo'],
+  ['sit on a bench', 'siéntate en un banco'],
+  ['sit on the machine', 'siéntate en la máquina'],
+  ['grab the handles', 'agarra las asas'],
+  ['hold the handles', 'sostén las asas'],
+  ['grasp the handles', 'agarra las asas'],
+  ['adjust the seat', 'ajusta el asiento'],
+  ['adjust the cable pulleys', 'ajusta las poleas'],
+  ['attach the band', 'sujeta la banda'],
+  ['wrap the band', 'envuelve la banda'],
+  ['secure the band', 'asegura la banda'],
+  ['stand in the center', 'ponte en el centro'],
+  ['stand facing', 'ponte frente a'],
+  ['keep your feet hip-width apart', 'mantén los pies al ancho de las caderas'],
+  ['keep your feet together', 'mantén los pies juntos'],
+  ['keep your balance', 'mantén el equilibrio'],
+  ['use a wall for balance', 'usa una pared para equilibrarte'],
+  ['place your hands on a wall', 'coloca tus manos en una pared'],
+  ['hold onto a wall', 'sujétate de una pared'],
+  ['extend your arms overhead', 'extiende tus brazos por encima de la cabeza'],
+  ['extend your arms out to the sides', 'extiende tus brazos hacia los lados'],
+  ['bring your hands together', 'junta tus manos'],
+  ['bring your arms', 'lleva tus brazos'],
+  ['open your chest', 'abre tu pecho'],
+  ['lift your gaze', 'eleva tu mirada'],
+  ['look up', 'mira hacia arriba'],
+  ['look forward', 'mira al frente'],
+  ['keep your chin tucked', 'mantén la barbilla recogida'],
+  ['tuck your chin', 'recoge la barbilla'],
+  ['round your back', 'redondea tu espalda'],
+  ['arch your back', 'arquea tu espalda'],
+  ['flatten your back', 'aplana tu espalda'],
+  ['hinge at your hips', 'flexiona desde las caderas'],
+  ['bend at your hips', 'inclínate desde las caderas'],
+  ['squat down', 'agáchate'],
+  ['lower into a squat', 'baja en sentadilla'],
+  ['stand back up', 'levántate'],
+  ['come back up', 'regresa arriba'],
+  ['rise back up', 'levántate de nuevo'],
+  ['hold the contraction', 'mantén la contracción'],
+  ['squeeze at the top', 'aprieta en la parte superior'],
+  ['control the movement', 'controla el movimiento'],
+  ['perform the movement', 'realiza el movimiento'],
+  ['complete the movement', 'completa el movimiento'],
+  ['do not lock your elbows', 'no bloquees tus codos'],
+  ['do not lock your knees', 'no bloquees tus rodillas'],
+  ['keep a slight bend', 'mantén una ligera flexión'],
+  ['maintain a slight bend', 'mantén una ligera flexión'],
+  ['keep your shoulders down', 'mantén tus hombros abajo'],
+  ['keep your shoulders back', 'mantén tus hombros hacia atrás'],
+  ['pull your shoulders back', 'lleva tus hombros hacia atrás'],
+  ['depress your shoulders', 'deprime tus hombros'],
+  ['retract your shoulder blades', 'retrae tus omóplatos'],
+  ['protract your shoulder blades', 'protrae tus omóplatos'],
+  ['keep your wrists straight', 'mantén tus muñecas rectas'],
+  ['keep your wrists neutral', 'mantén tus muñecas neutrales'],
+  ['do not let your wrists bend', 'no dejes que tus muñecas se doblen'],
+  ['maintain a neutral spine', 'mantén la columna neutral'],
+  ['keep your spine neutral', 'mantén la columna neutral'],
+  ['do not arch your lower back', 'no arquees la zona lumbar'],
+  ['keep your lower back pressed', 'mantén la zona lumbar pegada'],
+  ['press your lower back', 'presiona tu zona lumbar'],
+  ['brace your core', 'fija tu core'],
+  ['tighten your core', 'aprieta tu core'],
+  ['engage your abs', 'contrae tus abdominales'],
+  // --- Full Exercise Names ---
+  ['barbell bench press', 'press de banca con barra'],
+  ['dumbbell bench press', 'press de banca con mancuernas'],
+  ['incline barbell bench press', 'press de banca inclinado con barra'],
+  ['incline dumbbell bench press', 'press de banca inclinado con mancuernas'],
+  ['decline barbell bench press', 'press de banca declinado con barra'],
+  ['decline dumbbell bench press', 'press de banca declinado con mancuernas'],
+  ['dumbbell fly', 'apertura con mancuernas'],
+  ['incline dumbbell fly', 'apertura inclinada con mancuernas'],
+  ['cable crossover', 'cruce de poleas'],
+  ['standing barbell overhead press', 'press militar con barra de pie'],
+  ['seated dumbbell shoulder press', 'press de hombros con mancuernas sentado'],
+  ['dumbbell lateral raise', 'elevación lateral con mancuernas'],
+  ['dumbbell front raise', 'elevación frontal con mancuernas'],
+  ['bent over dumbbell reverse fly', 'apertura inversa inclinado con mancuernas'],
+  ['face pull', 'jalón facial'],
+  ['barbell row', 'remo con barra'],
+  ['dumbbell row', 'remo con mancuerna'],
+  ['seated cable row', 'remo en polea sentado'],
+  ['lat pulldown', 'jalón al pecho en polea'],
+  ['wide grip lat pulldown', 'jalón al pecho con agarre abierto'],
+  ['close grip lat pulldown', 'jalón al pecho con agarre cerrado'],
+  ['pull up', 'dominada'],
+  ['dumbbell bicep curl', 'curl de bíceps con mancuernas'],
+  ['standing barbell curl', 'curl con barra de pie'],
+  ['standing dumbbell curl', 'curl con mancuernas de pie'],
+  ['hammer curl', 'curl martillo'],
+  ['concentration curl', 'curl concentrado'],
+  ['preacher curl', 'curl predicador'],
+  ['cable bicep curl', 'curl de bíceps en polea'],
+  ['triceps pushdown', 'extensión de tríceps en polea'],
+  ['overhead triceps extension', 'extensión de tríceps por encima de la cabeza'],
+  ['lying triceps extension', 'extensión de tríceps acostado'],
+  ['close grip bench press', 'press de banca con agarre cerrado'],
+  ['dumbbell overhead triceps extension', 'extensión de tríceps con mancuerna'],
+  ['barbell squat', 'sentadilla con barra'],
+  ['goblet squat', 'sentadilla con pesa rusa'],
+  ['front squat', 'sentadilla frontal'],
+  ['bulgarian split squat', 'sentadilla búlgara'],
+  ['leg press', 'prensa de piernas'],
+  ['leg extension', 'extensión de piernas'],
+  ['leg curl', 'curl de piernas'],
+  ['romanian deadlift', 'peso muerto rumano'],
+  ['conventional deadlift', 'peso muerto convencional'],
+  ['sumo deadlift', 'peso muerto sumo'],
+  ['hip thrust', 'empuje de cadera'],
+  ['glute bridge', 'puente de glúteos'],
+  ['cable kickback', 'patada de glúteo en polea'],
+  ['standing calf raise', 'elevación de gemelos de pie'],
+  ['seated calf raise', 'elevación de gemelos sentado'],
+  ['dumbbell lunges', 'zancadas con mancuernas'],
+  ['walking lunges', 'zancadas caminando'],
+  ['reverse lunges', 'zancadas inversas'],
+  ['step up', 'subida al banco'],
+  ['box jump', 'salto al cajón'],
+  ['dumbbell step up', 'subida al banco con mancuernas'],
+  ['push up', 'flexión de brazos'],
+  ['incline push up', 'flexión inclinada'],
+  ['decline push up', 'flexión declinada'],
+  ['diamond push up', 'flexión diamante'],
+  ['wide push up', 'flexión con agarre abierto'],
+  ['dumbbell pullover', 'pullover con mancuerna'],
+  ['cable pullover', 'pullover en polea'],
+  ['plank', 'plancha abdominal'],
+  ['side plank', 'plancha lateral'],
+  ['crunch', 'abdominal crunch'],
+  ['reverse crunch', 'abdominal inverso'],
+  ['russian twist', 'giro ruso'],
+  ['bicycle crunch', 'abdominal bicicleta'],
+  ['leg raise', 'elevación de piernas'],
+  ['hanging leg raise', 'elevación de piernas colgado'],
+  ['cable woodchop', 'leñador en polea'],
+  ['medicine ball slam', 'balón medicinal al suelo'],
+  ['battle ropes', 'cuerdas de batalla'],
+  ['kettlebell swing', 'balanceo con pesa rusa'],
+  ['burpee', 'burpee'],
+  ['mountain climber', 'escalador'],
+  ['jumping jack', 'salto de tijera'],
+  ['dumbbell shrug', 'encogimiento con mancuernas'],
+  ['barbell shrug', 'encogimiento con barra'],
+  ['face pull', 'jalón facial'],
+  ['dumbbell wrist curl', 'curl de muñeca con mancuerna'],
+  ['barbell wrist curl', 'curl de muñeca con barra'],
+]);
+
+/**
+ * @description Busca una traducción en el diccionario interno DICT.
+ * @param {string} text - Texto en inglés
+ * @returns {string|null}
+ */
+const translateWithDict = (text) => {
+  const lower = text.toLowerCase().trim();
+  return DICT.get(lower) || null;
+};
+
+const translateWithMyMemory = async (text) => {
+  try {
+    const { data } = await axios.get(
+      'https://api.mymemory.translated.net/get',
+      { params: { q: text, langpair: 'en|es' }, timeout: 3000 }
+    );
+    return data?.responseData?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
+const translateWithGoogle = async (text) => {
+  const key = process.env.GOOGLE_TRANSLATE_API_KEY;
+  if (!key) return null;
+  try {
+    const { data } = await axios.post(
+      `https://translation.googleapis.com/language/translate/v2?key=${key}`,
+      { q: text, target: 'es', source: 'en' },
+      { timeout: 5000 }
+    );
+    return data?.data?.translations?.[0]?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * @description Elimina el prefijo "Step:NN" de un texto de instrucción.
+ * @param {string} text
+ * @returns {string}
+ */
+const cleanStep = (text) => text.replace(/^Step:\d+\s*/i, '');
+
+/**
+ * @description Traduce un texto de inglés a español usando diccionario,
+ *              MyMemory API o Google Translate API (con caché de 24h).
+ * @param {string} text - Texto a traducir
+ * @returns {Promise&lt;string>}
+ */
+const translateText = async (text) => {
+  if (!text || text.trim() === '') return text;
+  const trimmed = cleanStep(text.trim());
+
+  const cacheKey = trimmed.toLowerCase();
+  const cached = cache.get(cacheKey);
+  if (cached &amp;&amp; Date.now() - cached.timestamp &lt; CACHE_TTL) {
+    return cached.text;
+  }
+
+  const dictResult = translateWithDict(trimmed);
+  if (dictResult) {
+    cache.set(cacheKey, { text: dictResult, timestamp: Date.now() });
+    return dictResult;
+  }
+
+  const mymemory = await translateWithMyMemory(trimmed);
+  if (mymemory &amp;&amp; mymemory.toLowerCase() !== trimmed.toLowerCase()) {
+    cache.set(cacheKey, { text: mymemory, timestamp: Date.now() });
+    return mymemory;
+  }
+
+  const google = await translateWithGoogle(trimmed);
+  if (google) {
+    cache.set(cacheKey, { text: google, timestamp: Date.now() });
+    return google;
+  }
+
+  cache.set(cacheKey, { text: trimmed, timestamp: Date.now() });
+  return trimmed;
+};
+
+const translateArray = async (arr) => {
+  if (!Array.isArray(arr)) return arr;
+  return Promise.all(arr.map(item => translateText(item)));
+};
+
+/**
+ * @description Traduce todos los campos de texto de un objeto ejercicio
+ *              (nombre, partes del cuerpo, equipamiento, instrucciones, etc.).
+ * @param {Object} exercise - Ejercicio desde ExerciseDB API
+ * @returns {Promise&lt;Object>} Ejercicio con campos traducidos + raw originales
+ */
+const translateExercise = async (exercise) => {
+  if (!exercise) return exercise;
+
+  const [name, bodyParts, equipments, targetMuscles, secondaryMuscles, instructions] = await Promise.all([
+    translateText(exercise.name),
+    translateArray(exercise.bodyParts),
+    translateArray(exercise.equipments),
+    translateArray(exercise.targetMuscles),
+    translateArray(exercise.secondaryMuscles),
+    translateArray(exercise.instructions)
+  ]);
+
+  return {
+    ...exercise,
+    name,
+    bodyParts,
+    bodyPartsRaw: exercise.bodyParts,
+    equipments,
+    equipmentsRaw: exercise.equipments,
+    targetMuscles,
+    targetMusclesRaw: exercise.targetMuscles,
+    secondaryMuscles,
+    secondaryMusclesRaw: exercise.secondaryMuscles,
+    instructions,
+    translated: true
+  };
+};
+
+/**
+ * @description Traduce un array de ejercicios completos.
+ * @param {Object[]} exercises - Array de ejercicios desde ExerciseDB
+ * @returns {Promise&lt;Object[]>}
+ */
+const translateExercises = async (exercises) => {
+  if (!Array.isArray(exercises)) return exercises;
+  return Promise.all(exercises.map(ex => translateExercise(ex)));
+};
+
+/**
+ * @description Limpia la caché de traducciones.
+ * @returns {void}
+ */
+const clearCache = () => cache.clear();
+
+module.exports = { translateText, translateExercise, translateExercises, clearCache };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#checkExpiredMemberships">checkExpiredMemberships</a></li><li><a href="global.html#checkMembershipExpirations">checkMembershipExpirations</a></li><li><a href="global.html#checkStaleRequests">checkStaleRequests</a></li><li><a href="global.html#cleanStep">cleanStep</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#connectDB">connectDB</a></li><li><a href="global.html#createNotification">createNotification</a></li><li><a href="global.html#getClienteUserId">getClienteUserId</a></li><li><a href="global.html#getExerciseById">getExerciseById</a></li><li><a href="global.html#listExercises">listExercises</a></li><li><a href="global.html#notifyAdminsAndTrainers">notifyAdminsAndTrainers</a></li><li><a href="global.html#notifyAllByRole">notifyAllByRole</a></li><li><a href="global.html#protect">protect</a></li><li><a href="global.html#seed">seed</a></li><li><a href="global.html#seedPlans">seedPlans</a></li><li><a href="global.html#seedRoles">seedRoles</a></li><li><a href="global.html#startScheduledChecks">startScheduledChecks</a></li><li><a href="global.html#translateExercise">translateExercise</a></li><li><a href="global.html#translateExercises">translateExercises</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#translateWithDict">translateWithDict</a></li><li><a href="global.html#validateFields">validateFields</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 21:11:40 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

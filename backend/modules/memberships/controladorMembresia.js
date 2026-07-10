@@ -1,16 +1,8 @@
-<<<<<<< HEAD:backend/modules/memberships/membership.controller.js
 const Membership = require('../../models/Membresia');
 const MembershipHistory = require('../../models/HistorialMembresia');
 const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
 const Payment = require('../../models/Pago');
-=======
-﻿const Membership = require('../../models/Membresia');
-const MembershipHistory = require('../../models/HistorialMembresia');
-const Client = require('../../models/Cliente');
-const User = require('../../models/User');
-const Payment = require('../../models/Payment');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/memberships/controladorMembresia.js
 const Plan = require('../../models/Plan');
 const Settings = require('../../models/Configuracion');
 const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');

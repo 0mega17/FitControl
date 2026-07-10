@@ -1,13 +1,7 @@
-<<<<<<< HEAD:backend/modules/routines/routine.controller.js
 const Routine = require('../../models/Rutina');
 const AssignedRoutine = require('../../models/RutinaAsignada');
 const Client = require('../../models/Cliente');
-=======
-﻿const Routine = require('../../models/Rutina');
-const AssignedRoutine = require('../../models/RutinaAsignada');
-const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/routines/controladorRutina.js
 const { createNotification } = require('../../services/servicioNotificaciones');
 
 const crear = async (req, res) => {

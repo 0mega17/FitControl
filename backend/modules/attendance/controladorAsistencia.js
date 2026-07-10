@@ -1,8 +1,4 @@
-<<<<<<< HEAD:backend/modules/attendance/attendance.controller.js
 const crypto = require('crypto');
-=======
-﻿const crypto = require('crypto');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/attendance/controladorAsistencia.js
 const Attendance = require('../../models/Asistencia');
 const Client = require('../../models/Cliente');
 const Membership = require('../../models/Membresia');
