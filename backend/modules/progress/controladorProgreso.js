@@ -1,6 +1,13 @@
 ﻿const Progress = require('../../models/Progreso');
 const Client = require('../../models/Cliente');
 
+/**
+ * @description Registra una medición de progreso físico para un cliente.
+ * @route POST /api/progress
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const create = async (req, res) => {
   try {
     const { clienteId, peso, altura, porcentajeGrasa, medidas, observaciones } = req.body;
@@ -15,6 +22,13 @@ const create = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene el historial de progreso de un cliente.
+ * @route GET /api/progress/:clienteId?
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -31,6 +45,13 @@ const getAll = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene la última medición de progreso del cliente autenticado.
+ * @route GET /api/progress/last
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getLast = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });

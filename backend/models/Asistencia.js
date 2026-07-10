@@ -12,4 +12,5 @@ const attendanceSchema = new mongoose.Schema({
 
 attendanceSchema.index({ cliente: 1, fecha: -1 });
 
+/** @description Modelo de registro de asistencia con soporte QR y manual */
 module.exports = mongoose.model('Attendance', attendanceSchema);

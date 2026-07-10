@@ -32,4 +32,5 @@ const planSchema = new mongoose.Schema({
   timestamps: true
 });
 
+/** @description Modelo de planes de membresía con precio, duración y beneficios */
 module.exports = mongoose.model('Plan', planSchema);

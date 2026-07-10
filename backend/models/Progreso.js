@@ -16,4 +16,5 @@ const progressSchema = new mongoose.Schema({
   registradoPor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
+/** @description Modelo de seguimiento de progreso físico con medidas y observaciones */
 module.exports = mongoose.model('Progress', progressSchema);
