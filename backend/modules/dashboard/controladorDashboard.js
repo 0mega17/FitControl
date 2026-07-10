@@ -1,7 +1,13 @@
-﻿const User = require('../../models/Usuario');
+/**
+ * @module Estadisticas
+ * @description Controlador del dashboard: Estadisticas generales del gimnasio.
+ */
+
+const User = require('../../models/Usuario');
 const Role = require('../../models/Rol');
 const Membership = require('../../models/Membresia');
 
+/** Obtiene Estadisticas generales del dashboard. */
 const getStats = async (req, res) => {
   try {
     const rolCliente = await Role.findOne({ nombre: 'Cliente' });
@@ -25,7 +31,7 @@ const getStats = async (req, res) => {
       membresiasVencidas
     });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener estadísticas', error: error.message });
+    res.status(500).json({ mensaje: 'Error al obtener Estadisticas', error: error.message });
   }
 };
 

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/routineRequests/controladorSolicitudRutina.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/routineRequests/controladorSolicitudRutina.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module SolicitudesRutinas
+ * @description Controlador de solicitudes de rutina personalizada.
+ */
+
+const RoutineRequest = require('../../models/SolicitudRutina');
+const Routine = require('../../models/Rutina');
+const AssignedRoutine = require('../../models/RutinaAsignada');
+const Client = require('../../models/Cliente');
+const { createNotification, notifyAdminsAndTrainers } = require('../../services/servicioNotificaciones');
+
+/** Crea una solicitud de rutina personalizada para el cliente autenticado. */
+const crearSolicitud = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
+
+    const { edad, peso, estatura, experiencia, tiempoEntrenando, diasDisponibles, objetivo, otroObjetivo, metaPersonal } = req.body;
+    if (!edad || !peso || !estatura || !experiencia || !tiempoEntrenando || !diasDisponibles || !objetivo || !metaPersonal) {
+      return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
+    }
+
+    const solicitud = await RoutineRequest.create({
+      clienteId: cliente._id, edad, peso, estatura, experiencia,
+      tiempoEntrenando, diasDisponibles, objetivo,
+      otroObjetivo: objetivo === 'Otro' ? otroObjetivo : undefined,
+      metaPersonal
+    });
+
+    await createNotification({ usuarioId: req.user._id, asunto: 'Solicitud recibida', mensaje: 'Tu solicitud de rutina personalizada fue enviada correctamente.', severidad: 'info' });
+    await notifyAdminsAndTrainers({ asunto: 'Nueva solicitud de rutina', mensaje: `Un cliente ha solicitado una rutina personalizada.`, severidad: 'warning' });
+
+    res.status(201).json(solicitud);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al crear solicitud', error: error.message });
+  }
+};
+
+/** Obtiene las solicitudes de rutina del cliente autenticado. */
+const obtenerMisSolicitudes = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
+
+    const solicitudes = await RoutineRequest.find({ clienteId: cliente._id })
+      .populate('entrenadorId', 'nombre apellido')
+      .populate('rutinaAsignada', 'nombre nivel objetivo')
+      .sort({ fechaSolicitud: -1 });
+
+    res.json(solicitudes);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener solicitudes', error: error.message });
+  }
+};
+
+/** Obtiene todas las solicitudes de rutina para administradores y entrenadores. */
+const obtenerPendientes = async (req, res) => {
+  try {
+    const solicitudes = await RoutineRequest.find()
+      .populate({ path: 'clienteId', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .populate('entrenadorId', 'nombre apellido')
+      .populate('rutinaAsignada', 'nombre nivel objetivo')
+      .sort({ fechaSolicitud: -1 });
+
+    res.json(solicitudes);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener solicitudes', error: error.message });
+  }
+};
+
+/** Obtiene una solicitud por ID con control de autorización para clientes. */
+const obtenerPorId = async (req, res) => {
+  try {
+    const solicitud = await RoutineRequest.findById(req.params.id)
+      .populate({ path: 'clienteId', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .populate('entrenadorId', 'nombre apellido')
+      .populate('rutinaAsignada', 'nombre nivel objetivo ejercicios');
+
+    if (!solicitud) return res.status(404).json({ mensaje: 'Solicitud no encontrada' });
+
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (req.user.rol?.nombre === 'Cliente' &amp;&amp; (!cliente || solicitud.clienteId._id.toString() !== cliente._id.toString())) {
+      return res.status(403).json({ mensaje: 'No autorizado' });
+    }
+
+    res.json(solicitud);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener solicitud', error: error.message });
+  }
+};
+
+const getClienteUserId = async (clienteId) => {
+  try {
+    const client = await Client.findById(clienteId);
+    return client?.usuario;
+  } catch {
+    return null;
+  }
+};
+
+/** Aprueba una solicitud y la marca como en revisión por el entrenador. */
+const aprobarSolicitud = async (req, res) => {
+  try {
+    const solicitud = await RoutineRequest.findByIdAndUpdate(
+      req.params.id,
+      { estado: 'En revision', entrenadorId: req.user._id, fechaRespuesta: new Date() },
+      { new: true }
+    );
+    if (!solicitud) return res.status(404).json({ mensaje: 'Solicitud no encontrada' });
+    const userId = await getClienteUserId(solicitud.clienteId);
+    if (userId) {
+      await createNotification({ usuarioId: userId, asunto: 'Solicitud aprobada', mensaje: 'Tu solicitud fue aprobada por un entrenador.', severidad: 'success' });
+    }
+    res.json(solicitud);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al aprobar solicitud', error: error.message });
+  }
+};
+
+/** Rechaza una solicitud con un motivo opcional. */
+const rechazarSolicitud = async (req, res) => {
+  try {
+    const { motivo } = req.body;
+    const solicitud = await RoutineRequest.findByIdAndUpdate(
+      req.params.id,
+      { estado: 'Rechazada', entrenadorId: req.user._id, fechaRespuesta: new Date(), motivoRechazo: motivo || '' },
+      { new: true }
+    );
+    if (!solicitud) return res.status(404).json({ mensaje: 'Solicitud no encontrada' });
+    const userId = await getClienteUserId(solicitud.clienteId);
+    if (userId) {
+      await createNotification({ usuarioId: userId, asunto: 'Solicitud rechazada', mensaje: `Tu solicitud fue rechazada.${motivo ? ' Motivo: ' + motivo : ''}`, severidad: 'urgent' });
+    }
+    res.json(solicitud);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al rechazar solicitud', error: error.message });
+  }
+};
+
+/** Asigna una rutina a la solicitud y la marca como rutina asignada. */
+const asignarRutina = async (req, res) => {
+  try {
+    const { rutinaId } = req.body;
+    const solicitud = await RoutineRequest.findById(req.params.id);
+    if (!solicitud) return res.status(404).json({ mensaje: 'Solicitud no encontrada' });
+
+    const rutina = await Routine.findById(rutinaId);
+    if (!rutina) return res.status(404).json({ mensaje: 'Rutina no encontrada' });
+
+    await AssignedRoutine.create({
+      rutina: rutinaId,
+      cliente: solicitud.clienteId,
+      asignadoPor: req.user._id,
+      estado: 'activa'
+    });
+
+    solicitud.estado = 'Rutina asignada';
+    solicitud.rutinaAsignada = rutinaId;
+    solicitud.fechaRespuesta = new Date();
+    await solicitud.save();
+
+    const userId = await getClienteUserId(solicitud.clienteId);
+    if (userId) {
+      await createNotification({ usuarioId: userId, asunto: 'Rutina personalizada asignada', mensaje: 'Se ha asignado una nueva rutina personalizada a tu cuenta.', severidad: 'success' });
+    }
+
+    res.json(solicitud);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al asignar rutina', error: error.message });
+  }
+};
+
+module.exports = { crearSolicitud, obtenerMisSolicitudes, obtenerPendientes, obtenerPorId, aprobarSolicitud, rechazarSolicitud, asignarRutina };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

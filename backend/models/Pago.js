@@ -1,5 +1,14 @@
+/**
+ * @module Pagos
+ * @description Esquema de pagos asociados a membresías y clientes.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class Pago
+ * @memberof module:Pagos
+ */
 const paymentSchema = new mongoose.Schema({
   valor: {
     type: Number,
@@ -28,5 +37,4 @@ const paymentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de pagos asociados a membresías y clientes */
 module.exports = mongoose.model('Payment', paymentSchema);

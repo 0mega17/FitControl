@@ -1,8 +1,14 @@
+/**
+ * @module Asistencia
+ * @description Controlador de asistencia: generación QR, registro y consulta.
+ */
+
 const crypto = require('crypto');
 const Attendance = require('../../models/Asistencia');
 const Client = require('../../models/Cliente');
 const Membership = require('../../models/Membresia');
 
+/** Genera un token QR para registrar asistencia del cliente autenticado. */
 const generateQR = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -20,6 +26,7 @@ const generateQR = async (req, res) => {
   }
 };
 
+/** Registra asistencia mediante datos QR escaneados. */
 const registerByQR = async (req, res) => {
   try {
     const { qrData } = req.body;
@@ -37,6 +44,7 @@ const registerByQR = async (req, res) => {
   }
 };
 
+/** Registra asistencia manual para un cliente específico. */
 const registerManual = async (req, res) => {
   try {
     const { clienteId } = req.body;
@@ -52,6 +60,7 @@ const registerManual = async (req, res) => {
   }
 };
 
+/** Obtiene las últimas 30 asistencias del cliente autenticado. */
 const getByClient = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -63,6 +72,7 @@ const getByClient = async (req, res) => {
   }
 };
 
+/** Obtiene todas las asistencias con filtro opcional por fecha. */
 const getAll = async (req, res) => {
   try {
     const { fecha } = req.query;

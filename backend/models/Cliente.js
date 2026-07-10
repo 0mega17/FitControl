@@ -37,5 +37,13 @@ const clientSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de datos extendidos del perfil de cliente */
+/**
+ * @module Usuarios
+ * @description Modelo de datos extendidos del perfil de cliente.
+ */
+
+/**
+ * @class Cliente
+ * @memberof module:Usuarios
+ */
 module.exports = mongoose.model('Client', clientSchema);

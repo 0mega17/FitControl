@@ -1,9 +1,15 @@
+/**
+ * @module Estadisticas
+ * @description Controlador de reportes: generación de reportes e ingresos del dashboard.
+ */
+
 const User = require('../../models/Usuario');
 const Role = require('../../models/Rol');
 const Membership = require('../../models/Membresia');
 const Payment = require('../../models/Pago');
 const Attendance = require('../../models/Asistencia');
 
+/** Genera un reporte general con ingresos, asistencias y membresías. */
 const getReport = async (req, res) => {
   try {
     const { tipo, desde, hasta } = req.query;
@@ -45,6 +51,7 @@ const getReport = async (req, res) => {
   }
 };
 
+/** Obtiene estadísticas resumidas para el dashboard principal. */
 const getDashboardStats = async (req, res) => {
   try {
     const rolCliente = await Role.findOne({ nombre: 'Cliente' });

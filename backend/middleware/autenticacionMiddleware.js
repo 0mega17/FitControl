@@ -1,15 +1,12 @@
-﻿const jwt = require('jsonwebtoken');
+/**
+ * @module Autenticacion
+ * @description Middleware de Autenticacion JWT para proteger rutas.
+ */
+
+const jwt = require('jsonwebtoken');
 const User = require('../models/Usuario');
 
-/**
- * @description Middleware que protege rutas verificando un token JWT Bearer.
- *              Adjunta `req.user` con datos del usuario autenticado.
- *              Rechaza cuentas inactivas y tokens expirados o inválidos.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- * @returns {Promise<void>}
- */
+/** Middleware que protege rutas verificando un token JWT Bearer. */
 const protect = async (req, res, next) => {
   let token;
 
@@ -32,7 +29,7 @@ const protect = async (req, res, next) => {
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({ mensaje: 'Token expirado', codigo: 'TOKEN_EXPIRED' });
       }
-      return res.status(401).json({ mensaje: 'Token no válido' });
+      return res.status(401).json({ mensaje: 'Token no v�lido' });
     }
   } else {
     return res.status(401).json({ mensaje: 'Acceso denegado, token requerido' });

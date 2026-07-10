@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/memberships/controladorMembresia.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/memberships/controladorMembresia.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Membresias
+ * @description Controlador de membresías: creación, renovación, consulta de estados.
+ */
+
+const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const Client = require('../../models/Cliente');
+const User = require('../../models/Usuario');
+const Payment = require('../../models/Pago');
+const Plan = require('../../models/Plan');
+const Settings = require('../../models/Configuracion');
+const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
+
+/** Calcula la fecha de vencimiento según el tipo de membresía. */
+const calcularVencimiento = (tipo) => {
+  const ahora = new Date();
+  switch (tipo) {
+    case 'Diaria':
+      return new Date(ahora.setDate(ahora.getDate() + 1));
+    case 'Semanal':
+      return new Date(ahora.setDate(ahora.getDate() + 7));
+    case 'Mensual':
+      return new Date(ahora.setMonth(ahora.getMonth() + 1));
+    case 'Trimestral':
+      return new Date(ahora.setMonth(ahora.getMonth() + 3));
+    case 'Anual':
+      return new Date(ahora.setFullYear(ahora.getFullYear() + 1));
+    default:
+      return new Date(ahora.setDate(ahora.getDate() + 1));
+  }
+};
+
+const PRECIOS_DEFAULTS = {
+  Diaria: 10,
+  Semanal: 50,
+  Mensual: 150,
+  Trimestral: 400,
+  Anual: 1200
+};
+
+/** Obtiene los precios de membresías desde la configuración o usa valores por defecto. */
+const obtenerPrecios = async () => {
+  try {
+    const config = await Settings.findOne({ key: 'membershipPrices' });
+    return config?.value || PRECIOS_DEFAULTS;
+  } catch {
+    return PRECIOS_DEFAULTS;
+  }
+};
+
+/** Crea una nueva membresía para un cliente. */
+const createMembership = async (req, res) => {
+  try {
+    const { tipo, clienteEmail, metodoPago } = req.body;
+
+    const usuario = await User.findOne({ email: clienteEmail });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado con ese email' });
+    }
+
+    const cliente = await Client.findOne({ usuario: usuario._id });
+    if (!cliente) {
+      return res.status(404).json({ mensaje: 'El usuario no es un cliente registrado' });
+    }
+
+    const activaExistente = await Membership.findOne({ cliente: cliente._id, estado: 'activa' });
+    if (activaExistente) {
+      return res.status(400).json({ mensaje: 'El cliente ya tiene una membresia activa' });
+    }
+
+    const PRECIOS = await obtenerPrecios();
+    const fechaVencimiento = calcularVencimiento(tipo);
+    const precio = PRECIOS[tipo];
+
+    const membresia = await Membership.create({
+      tipo,
+      fechaInicio: new Date(),
+      fechaVencimiento,
+      cliente: cliente._id,
+      precio
+    });
+
+    await Payment.create({
+      valor: precio,
+      metodoPago: metodoPago || 'Efectivo',
+      cliente: cliente._id,
+      membresia: membresia._id
+    });
+
+    await createNotification({ usuarioId: usuario._id, asunto: 'Pago registrado', mensaje: 'Tu pago fue registrado correctamente.', severidad: 'info' });
+    await notifyAllByRole({ rol: 'Administrador', asunto: 'Nuevo pago', mensaje: `Se registro un nuevo pago de ${usuario.nombre} ${usuario.apellido} por $${precio}.`, severidad: 'info' });
+
+    res.status(201).json(membresia);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al crear membresÃ­a', error: error.message });
+  }
+};
+
+/** Obtiene todas las membresías registradas. */
+const getAll = async (req, res) => {
+  try {
+    const membresias = await Membership.find()
+      .populate({ path: 'cliente', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .sort({ createdAt: -1 });
+    res.json(membresias);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as', error: error.message });
+  }
+};
+
+/** Obtiene las membresías activas. */
+const getActive = async (req, res) => {
+  try {
+    const membresias = await Membership.find({ estado: 'activa' })
+      .populate({ path: 'cliente', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .sort({ fechaVencimiento: 1 });
+    res.json(membresias);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as activas', error: error.message });
+  }
+};
+
+/** Obtiene las membresías vencidas. */
+const getExpired = async (req, res) => {
+  try {
+    const membresias = await Membership.find({ estado: 'vencida' })
+      .populate({ path: 'cliente', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .sort({ fechaVencimiento: -1 });
+    res.json(membresias);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener membresÃ­as vencidas', error: error.message });
+  }
+};
+
+/** Obtiene el semáforo de membresías según su estado y vencimiento. */
+const getSemaforo = async (req, res) => {
+  try {
+    await Membership.updateMany(
+      { fechaVencimiento: { $lt: new Date() }, estado: 'activa' },
+      { estado: 'vencida' }
+    );
+    const ahora = new Date();
+    const dentro7Dias = new Date(ahora.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const membresias = await Membership.find()
+      .populate({ path: 'cliente', populate: { path: 'usuario', select: 'nombre apellido email' } })
+      .sort({ fechaVencimiento: 1 });
+
+    const resultado = membresias.map(m => {
+      let color;
+      if (m.estado === 'vencida') color = 'rojo';
+      else if (m.estado === 'activa' &amp;&amp; m.fechaVencimiento &lt;= dentro7Dias) color = 'amarillo';
+      else if (m.estado === 'activa') color = 'verde';
+      else color = 'gris';
+
+      return { ...m.toObject(), semaforo: color };
+    });
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener semÃ¡foro', error: error.message });
+  }
+};
+
+const PLAN_MAP = {
+  Diaria: 'Basico',
+  Semanal: 'Estandar',
+  Mensual: 'Estandar',
+  Trimestral: 'Premium',
+  Anual: 'Premium'
+};
+
+/** Obtiene el plan actual del cliente autenticado. */
+const getMyPlan = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) {
+      return res.json({ plan: 'Basico', tipo: null });
+    }
+
+    const activa = await Membership.findOne({ cliente: cliente._id, estado: 'activa' })
+      .sort({ fechaVencimiento: -1 });
+
+    if (!activa) {
+      return res.json({ plan: 'Basico', tipo: null });
+    }
+
+    const plan = PLAN_MAP[activa.tipo] || 'Basico';
+    res.json({ plan, tipo: activa.tipo, vencimiento: activa.fechaVencimiento, membershipId: activa._id });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener plan', error: error.message });
+  }
+};
+
+/** Obtiene las membresías y pagos del cliente autenticado. */
+const getMyMemberships = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
+
+    const membresias = await Membership.find({ cliente: cliente._id })
+      .sort({ fechaInicio: -1 });
+
+    const membresiaIds = membresias.map(m => m._id);
+    const pagos = await Payment.find({ membresia: { $in: membresiaIds } })
+      .sort({ fechaPago: -1 });
+
+    res.json({ membresias, pagos });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener membresias', error: error.message });
+  }
+};
+
+/** Obtiene los precios configurados de las membresías. */
+const getPrices = async (req, res) => {
+  try {
+    const precios = await obtenerPrecios();
+    res.json(precios);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener precios', error: error.message });
+  }
+};
+
+/** Actualiza los precios de las membresías. */
+const updatePrices = async (req, res) => {
+  try {
+    const precios = req.body;
+    const tiposValidos = ['Diaria', 'Semanal', 'Mensual', 'Trimestral', 'Anual'];
+    for (const tipo of Object.keys(precios)) {
+      if (!tiposValidos.includes(tipo)) {
+        return res.status(400).json({ mensaje: `Tipo invalido: ${tipo}` });
+      }
+      if (typeof precios[tipo] !== 'number' || precios[tipo] &lt;= 0) {
+        return res.status(400).json({ mensaje: `Precio invalido para ${tipo}: debe ser un numero positivo` });
+      }
+    }
+
+    let config = await Settings.findOne({ key: 'membershipPrices' });
+    if (config) {
+      config.value = { ...config.value, ...precios };
+    } else {
+      config = new Settings({ key: 'membershipPrices', value: precios });
+    }
+    await config.save();
+
+    res.json({ mensaje: 'Precios actualizados', precios: config.value });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar precios', error: error.message });
+  }
+};
+
+/** Actualiza los datos de una membresía existente. */
+const updateMembership = async (req, res) => {
+  try {
+    const { tipo, precio, estado } = req.body;
+    const membresia = await Membership.findById(req.params.id);
+    if (!membresia) return res.status(404).json({ mensaje: 'Membresia no encontrada' });
+
+    if (tipo !== undefined) {
+      membresia.tipo = tipo;
+      membresia.precio = PRECIOS[tipo] || membresia.precio;
+    }
+    if (precio !== undefined) membresia.precio = precio;
+    if (estado !== undefined) membresia.estado = estado;
+    await membresia.save();
+
+    res.json(membresia);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar membresia', error: error.message });
+  }
+};
+
+/** Renueva una membresía existente. */
+const renewMembership = async (req, res) => {
+  try {
+    const membresia = await Membership.findById(req.params.id);
+    if (!membresia) return res.status(404).json({ mensaje: 'Membresia no encontrada' });
+
+    const fechaVencimiento = calcularVencimiento(membresia.tipo);
+    membresia.fechaInicio = new Date();
+    membresia.fechaVencimiento = fechaVencimiento;
+    membresia.estado = 'activa';
+    await membresia.save();
+
+    await Payment.create({
+      valor: membresia.precio,
+      metodoPago: req.body.metodoPago || 'Efectivo',
+      cliente: membresia.cliente,
+      membresia: membresia._id
+    });
+
+    const cliente = await Client.findById(membresia.cliente).populate('usuario', 'nombre apellido');
+    const nombreCliente = cliente?.usuario?.nombre || 'Cliente';
+    await notifyAllByRole({ rol: 'Administrador', asunto: 'Membresia renovada', mensaje: `Se renovo la membresia de ${nombreCliente}.`, severidad: 'info' });
+
+    res.json(membresia);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al renovar membresia', error: error.message });
+  }
+};
+
+/** Cancela una membresía existente. */
+const cancelMembership = async (req, res) => {
+  try {
+    const membresia = await Membership.findById(req.params.id);
+    if (!membresia) return res.status(404).json({ mensaje: 'Membresia no encontrada' });
+
+    membresia.estado = 'cancelada';
+    await membresia.save();
+
+    res.json({ mensaje: 'Membresia cancelada', membresia });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cancelar membresia', error: error.message });
+  }
+};
+
+/** Obtiene el plan del cliente autenticado con información detallada e historial. */
+const getMyPlanEnhanced = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) {
+      return res.json({ plan: null });
+    }
+
+    const activa = await Membership.findOne({ cliente: cliente._id, estado: 'activa' })
+      .sort({ fechaVencimiento: -1 });
+
+    if (!activa) {
+      const historial = await MembershipHistory.find({ cliente: cliente._id })
+        .populate('planNuevo planAnterior')
+        .sort({ fechaCambio: -1 });
+      return res.json({ plan: null, historial });
+    }
+
+    let planInfo = null;
+    if (activa.plan) {
+      planInfo = await Plan.findById(activa.plan);
+    }
+
+    res.json({
+      membresia: activa,
+      planInfo,
+      historial: await MembershipHistory.find({ cliente: cliente._id })
+        .populate('planNuevo planAnterior')
+        .sort({ fechaCambio: -1 })
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener plan', error: error.message });
+  }
+};
+
+/** Cambia el plan del cliente autenticado a un nuevo plan. */
+const changePlan = async (req, res) => {
+  try {
+    const { planId } = req.body;
+    if (!planId) return res.status(400).json({ mensaje: 'Plan requerido' });
+
+    const plan = await Plan.findById(planId);
+    if (!plan || !plan.activo) return res.status(404).json({ mensaje: 'Plan no disponible' });
+
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
+
+    const membresiaActiva = await Membership.findOne({ cliente: cliente._id, estado: 'activa' });
+
+    const fechaInicio = new Date();
+    const fechaVencimiento = new Date(fechaInicio);
+    fechaVencimiento.setDate(fechaVencimiento.getDate() + plan.duracionDias);
+
+    const nuevaMembresia = await Membership.create({
+      tipo: plan.nombre,
+      fechaInicio,
+      fechaVencimiento,
+      cliente: cliente._id,
+      precio: plan.precio,
+      plan: plan._id,
+      beneficios: plan.beneficios
+    });
+
+    await Payment.create({
+      valor: plan.precio,
+      metodoPago: 'Otro',
+      cliente: cliente._id,
+      membresia: nuevaMembresia._id
+    });
+
+    await MembershipHistory.create({
+      cliente: cliente._id,
+      planAnterior: membresiaActiva?.plan || null,
+      planNuevo: plan._id,
+      fechaInicio,
+      fechaFin: fechaVencimiento,
+      precio: plan.precio,
+      estado: 'activa'
+    });
+
+    if (membresiaActiva) {
+      membresiaActiva.estado = 'completada';
+      await membresiaActiva.save();
+
+      const historialAnterior = await MembershipHistory.findOne({
+        cliente: cliente._id,
+        planNuevo: membresiaActiva.plan,
+        estado: 'activa'
+      });
+      if (historialAnterior) {
+        historialAnterior.estado = 'completada';
+        historialAnterior.fechaFin = new Date();
+        await historialAnterior.save();
+      }
+    }
+
+    res.json({ mensaje: 'Plan cambiado exitosamente', membresia: nuevaMembresia });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cambiar plan', error: error.message });
+  }
+};
+
+/** Obtiene el historial de membresías del cliente autenticado. */
+const getMembershipHistory = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Perfil de cliente no encontrado' });
+
+    const historial = await MembershipHistory.find({ cliente: cliente._id })
+      .populate('planNuevo planAnterior')
+      .sort({ fechaCambio: -1 });
+
+    res.json(historial);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener historial', error: error.message });
+  }
+};
+
+module.exports = { createMembership, getAll, getActive, getExpired, getSemaforo, getMyPlan, getMyMemberships, getPrices, updatePrices, updateMembership, renewMembership, cancelMembership, getMyPlanEnhanced, changePlan, getMembershipHistory };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

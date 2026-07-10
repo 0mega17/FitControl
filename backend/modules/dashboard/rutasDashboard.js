@@ -1,4 +1,9 @@
-﻿const express = require('express');
+/**
+ * @module Estadisticas
+ * @description Rutas del dashboard: Estadisticas generales.
+ */
+
+const express = require('express');
 const { getStats } = require('./controladorDashboard');
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');

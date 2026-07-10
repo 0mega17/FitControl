@@ -1,13 +1,11 @@
 {
   "source": {
-    "include": ["."],
-    "exclude": [
-      "node_modules",
-      "docs"
-    ]
+    "include": ["./"],
+    "exclude": ["./node_modules", "./docs", "./coverage"]
   },
   "opts": {
     "destination": "./docs",
     "recurse": true
-  }
+  },
+  "plugins": []
 }

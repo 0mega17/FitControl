@@ -1,3 +1,8 @@
+/**
+ * @module SolicitudesRutinas
+ * @description Modelos de datos para solicitudes de rutina personalizada.
+ */
+
 const mongoose = require('mongoose');
 
 const routineRequestSchema = new mongoose.Schema({
@@ -37,5 +42,8 @@ const routineRequestSchema = new mongoose.Schema({
   motivoRechazo: { type: String }
 }, { timestamps: true });
 
-/** @description Modelo de solicitudes personalizadas de rutina por cliente */
+/**
+ * @class SolicitudRutina
+ * @memberof module:SolicitudesRutinas
+ */
 module.exports = mongoose.model('RoutineRequest', routineRequestSchema);

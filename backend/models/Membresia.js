@@ -1,5 +1,14 @@
+/**
+ * @module Membresias
+ * @description Esquema de membresía con planes, fechas y estados.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class Membresia
+ * @memberof module:Membresias
+ */
 const membershipSchema = new mongoose.Schema({
   tipo: {
     type: String,
@@ -51,5 +60,4 @@ membershipSchema.methods.verificarEstado = function () {
   }
 };
 
-/** @description Modelo de membresías con control de estado y verificación de vencimiento */
 module.exports = mongoose.model('Membership', membershipSchema);

@@ -1,10 +1,12 @@
-﻿const express = require('express');
-const router = express.Router();
-<<<<<<< HEAD:backend/modules/plans/plans.routes.js
-const planController = require('./plan.controller');
-=======
+﻿/**
+ * @module Planes
+ * @description Rutas de planes de membresía: CRUD.
+ */
+
+const express = require('express');
 const planController = require('./controladorPlanes');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/plans/rutasPlanes.js
+
+const router = express.Router();
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');
 

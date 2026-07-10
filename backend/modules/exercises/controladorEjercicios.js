@@ -1,6 +1,12 @@
-﻿const exerciseService = require('../../services/servicioEjercicios');
+﻿/**
+ * @module Ejercicios
+ * @description Controlador de ejercicios: listado, detalle, partes del cuerpo, músculos y equipamiento.
+ */
+
+const exerciseService = require('../../services/servicioEjercicios');
 const translationService = require('../../services/servicioTraduccion');
 
+/** Lista ejercicios con filtros opcionales y paginación por cursor. */
 const list = async (req, res) => {
   try {
     const { cursor, limit = 20, bodyParts, targetMuscles, equipments, name } = req.query;
@@ -30,6 +36,7 @@ const list = async (req, res) => {
   }
 };
 
+/** Obtiene un ejercicio por su ID. */
 const getById = async (req, res) => {
   try {
     const result = await exerciseService.getExerciseById(req.params.id);
@@ -40,6 +47,7 @@ const getById = async (req, res) => {
   }
 };
 
+/** Obtiene la lista de partes del cuerpo disponibles en los ejercicios. */
 const getBodyParts = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });
@@ -54,6 +62,7 @@ const getBodyParts = async (req, res) => {
   }
 };
 
+/** Obtiene la lista de músculos objetivo disponibles en los ejercicios. */
 const getTargetMuscles = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });
@@ -68,6 +77,7 @@ const getTargetMuscles = async (req, res) => {
   }
 };
 
+/** Obtiene la lista de equipamiento disponible en los ejercicios. */
 const getEquipment = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });

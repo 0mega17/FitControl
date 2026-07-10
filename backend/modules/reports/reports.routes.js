@@ -1,3 +1,8 @@
+/**
+ * @module Estadisticas
+ * @description Rutas de reportes y estadísticas del dashboard.
+ */
+
 const express = require('express');
 const { getReport, getDashboardStats } = require('./report.controller');
 const { protect } = require('../../middleware/autenticacionMiddleware');

@@ -1,9 +1,11 @@
+/**
+ * @module Configuracion
+ * @description Conexión a MongoDB.
+ */
+
 const mongoose = require('mongoose');
 
-/**
- * @description Conecta a MongoDB usando la URI de variable de entorno.
- * @returns {Promise<void>}
- */
+/** Conecta a MongoDB usando la URI de variable de entorno. */
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);

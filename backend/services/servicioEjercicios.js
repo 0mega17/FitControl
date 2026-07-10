@@ -7,17 +7,6 @@ const apiClient = axios.create({
   timeout: 10000
 });
 
-/**
- * @description Obtiene lista paginada de ejercicios desde ExerciseDB API.
- * @param {Object} [opts={}]
- * @param {string} [opts.cursor] - Paginación
- * @param {number} [opts.limit=20] - Resultados por página
- * @param {string} [opts.bodyParts] - Filtro por parte del cuerpo
- * @param {string} [opts.targetMuscles] - Filtro por músculo objetivo
- * @param {string} [opts.equipments] - Filtro por equipo
- * @param {string} [opts.name] - Filtro por nombre
- * @returns {Promise<Object>}
- */
 const listExercises = async ({ cursor, limit = 20, bodyParts, targetMuscles, equipments, name } = {}) => {
   const params = { limit };
   if (cursor) params.cursor = cursor;
@@ -30,11 +19,6 @@ const listExercises = async ({ cursor, limit = 20, bodyParts, targetMuscles, equ
   return data;
 };
 
-/**
- * @description Obtiene un ejercicio por su ID desde ExerciseDB API.
- * @param {string} id - ID del ejercicio en ExerciseDB
- * @returns {Promise<Object>}
- */
 const getExerciseById = async (id) => {
   const { data } = await apiClient.get(`/exercises/${id}`);
   return data;

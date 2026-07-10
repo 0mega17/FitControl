@@ -13,9 +13,13 @@ const classGroupSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 /**
- * @description Virtual que calcula los cupos disponibles restando
- *              los inscritos actuales de la capacidad máxima.
- * @returns {number}
+ * @module Calendario
+ * @description Modelo de clases grupales con capacidad, horario y control de inscritos.
+ */
+
+/**
+ * @class ClaseGrupal
+ * @memberof module:Calendario
  */
 classGroupSchema.virtual('cuposDisponibles').get(function () {
   return this.capacidad - (this.inscritos?.length || 0);
@@ -23,5 +27,4 @@ classGroupSchema.virtual('cuposDisponibles').get(function () {
 
 classGroupSchema.set('toJSON', { virtuals: true });
 
-/** @description Modelo de clases grupales con capacidad, horario y control de inscritos */
 module.exports = mongoose.model('ClassGroup', classGroupSchema);

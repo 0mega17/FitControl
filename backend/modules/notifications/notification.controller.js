@@ -1,5 +1,11 @@
+/**
+ * @module Notificaciones
+ * @description Controlador de notificaciones: creación, consulta y marcado como leído.
+ */
+
 const Notification = require('../../models/Notificacion');
 
+/** Crea una nueva notificación para un usuario. */
 const create = async (req, res) => {
   try {
     const notificacion = await Notification.create(req.body);
@@ -9,6 +15,7 @@ const create = async (req, res) => {
   }
 };
 
+/** Obtiene las notificaciones del usuario autenticado. */
 const getMyNotifications = async (req, res) => {
   try {
     const notis = await Notification.find({ usuario: req.user._id })
@@ -19,6 +26,7 @@ const getMyNotifications = async (req, res) => {
   }
 };
 
+/** Obtiene todas las notificaciones (solo administradores). */
 const getAll = async (req, res) => {
   try {
     const notis = await Notification.find()
@@ -30,6 +38,7 @@ const getAll = async (req, res) => {
   }
 };
 
+/** Marca una notificación como leída por ID. */
 const markAsRead = async (req, res) => {
   try {
     const noti = await Notification.findByIdAndUpdate(req.params.id, { leida: true }, { new: true });
@@ -40,6 +49,7 @@ const markAsRead = async (req, res) => {
   }
 };
 
+/** Marca todas las notificaciones del usuario como leídas. */
 const markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany({ usuario: req.user._id, leida: false }, { leida: true });
@@ -49,6 +59,7 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
+/** Obtiene el conteo de notificaciones no leídas del usuario. */
 const getUnreadCount = async (req, res) => {
   try {
     const count = await Notification.countDocuments({ usuario: req.user._id, leida: false });
@@ -58,6 +69,7 @@ const getUnreadCount = async (req, res) => {
   }
 };
 
+/** Envía un correo electrónico de prueba (simulado). */
 const sendTestEmail = async (req, res) => {
   try {
     const { email, asunto, mensaje } = req.body;
@@ -67,6 +79,7 @@ const sendTestEmail = async (req, res) => {
   }
 };
 
+/** Envía un mensaje de WhatsApp de prueba (simulado). */
 const sendTestWhatsApp = async (req, res) => {
   try {
     const { telefono, mensaje } = req.body;

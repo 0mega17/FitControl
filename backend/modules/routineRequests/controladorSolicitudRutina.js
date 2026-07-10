@@ -1,17 +1,15 @@
-<<<<<<< HEAD:backend/modules/routineRequests/routineRequest.controller.js
+/**
+ * @module SolicitudesRutinas
+ * @description Controlador de solicitudes de rutina personalizada.
+ */
+
 const RoutineRequest = require('../../models/SolicitudRutina');
 const Routine = require('../../models/Rutina');
 const AssignedRoutine = require('../../models/RutinaAsignada');
 const Client = require('../../models/Cliente');
 const { createNotification, notifyAdminsAndTrainers } = require('../../services/servicioNotificaciones');
-=======
-﻿const RoutineRequest = require('../../models/SolicitudRutina');
-const Routine = require('../../models/Rutina');
-const AssignedRoutine = require('../../models/RutinaAsignada');
-const Client = require('../../models/Cliente');
-const { createNotification, notifyAdminsAndTrainers } = require('../../services/notificationService');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/routineRequests/controladorSolicitudRutina.js
 
+/** Crea una solicitud de rutina personalizada para el cliente autenticado. */
 const crearSolicitud = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -38,6 +36,7 @@ const crearSolicitud = async (req, res) => {
   }
 };
 
+/** Obtiene las solicitudes de rutina del cliente autenticado. */
 const obtenerMisSolicitudes = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -54,6 +53,7 @@ const obtenerMisSolicitudes = async (req, res) => {
   }
 };
 
+/** Obtiene todas las solicitudes de rutina para administradores y entrenadores. */
 const obtenerPendientes = async (req, res) => {
   try {
     const solicitudes = await RoutineRequest.find()
@@ -68,6 +68,7 @@ const obtenerPendientes = async (req, res) => {
   }
 };
 
+/** Obtiene una solicitud por ID con control de autorización para clientes. */
 const obtenerPorId = async (req, res) => {
   try {
     const solicitud = await RoutineRequest.findById(req.params.id)
@@ -97,6 +98,7 @@ const getClienteUserId = async (clienteId) => {
   }
 };
 
+/** Aprueba una solicitud y la marca como en revisión por el entrenador. */
 const aprobarSolicitud = async (req, res) => {
   try {
     const solicitud = await RoutineRequest.findByIdAndUpdate(
@@ -115,6 +117,7 @@ const aprobarSolicitud = async (req, res) => {
   }
 };
 
+/** Rechaza una solicitud con un motivo opcional. */
 const rechazarSolicitud = async (req, res) => {
   try {
     const { motivo } = req.body;
@@ -134,6 +137,7 @@ const rechazarSolicitud = async (req, res) => {
   }
 };
 
+/** Asigna una rutina a la solicitud y la marca como rutina asignada. */
 const asignarRutina = async (req, res) => {
   try {
     const { rutinaId } = req.body;

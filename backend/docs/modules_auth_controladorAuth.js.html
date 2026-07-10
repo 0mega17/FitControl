@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/auth/controladorAuth.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/auth/controladorAuth.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Autenticacion
+ * @description Controlador de Autenticacion: registro, inicio de sesi�n, renovaci�n de token y cierre de sesi�n.
+ */
+
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const User = require('../../models/Usuario');
+const Role = require('../../models/Rol');
+const Client = require('../../models/Cliente');
+const Trainer = require('../../models/Entrenador');
+const RefreshToken = require('../../models/TokenRefresco');
+const Membership = require('../../models/Membresia');
+const MembershipHistory = require('../../models/HistorialMembresia');
+const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
+
+const generarToken = (usuario) => {
+  return jwt.sign(
+    { id: usuario._id, nombre: usuario.nombre, correo: usuario.email, rol: usuario.rol?.nombre || usuario.rol },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+};
+
+const generarRefreshToken = async (usuarioId) => {
+  const token = crypto.randomBytes(40).toString('hex');
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  await RefreshToken.create({
+    token,
+    usuario: usuarioId,
+    expiresAt
+  });
+
+  return token;
+};
+
+const formatearUsuario = (usuario, token, refreshToken) => ({
+  _id: usuario._id,
+  nombre: usuario.nombre,
+  apellido: usuario.apellido,
+  email: usuario.email,
+  rol: usuario.rol,
+  estado: usuario.estado,
+  token,
+  refreshToken
+});
+
+/** Registra un nuevo usuario en el sistema. */
+const registrar = async (req, res) => {
+  try {
+    const { nombre, apellido, email, password, objetivo, edad, estatura, peso, experiencia, planId } = req.body;
+
+    const existeUsuario = await User.findOne({ email });
+    if (existeUsuario) {
+      return res.status(400).json({ mensaje: 'El correo ya est� registrado' });
+    }
+
+    const rol = await Role.findOne({ nombre: 'Cliente' });
+    if (!rol) {
+      return res.status(400).json({ mensaje: 'Rol no v�lido' });
+    }
+
+    if (planId) {
+      const Plan = require('../../models/Plan');
+      const plan = await Plan.findById(planId);
+      if (!plan || !plan.activo) {
+        return res.status(400).json({ mensaje: 'El plan seleccionado no est� disponible' });
+      }
+    }
+
+    const usuario = await User.create({
+      nombre: nombre || '',
+      apellido: apellido || '',
+      email,
+      password,
+      rol: rol._id
+    });
+
+    let cliente;
+    if (rol.nombre === 'Cliente') {
+      cliente = await Client.create({
+        usuario: usuario._id,
+        objetivo,
+        edad,
+        estatura,
+        peso,
+        experiencia
+      });
+    } else if (rol.nombre === 'Entrenador') {
+      await Trainer.create({ usuario: usuario._id, especialidades: [] });
+    }
+
+    if (planId &amp;&amp; cliente) {
+      const Plan = require('../../models/Plan');
+      const plan = await Plan.findById(planId);
+      if (plan &amp;&amp; plan.activo) {
+        const fechaInicio = new Date();
+        const fechaVencimiento = new Date(fechaInicio);
+        fechaVencimiento.setDate(fechaVencimiento.getDate() + plan.duracionDias);
+
+        await Membership.create({
+          tipo: plan.nombre,
+          fechaInicio,
+          fechaVencimiento,
+          cliente: cliente._id,
+          precio: plan.precio,
+          plan: plan._id,
+          beneficios: plan.beneficios
+        });
+
+        await MembershipHistory.create({
+          cliente: cliente._id,
+          planNuevo: plan._id,
+          fechaInicio,
+          fechaFin: fechaVencimiento,
+          precio: plan.precio,
+          estado: 'activa'
+        });
+      }
+    }
+
+    await notifyAllByRole({ rol: 'Administrador', asunto: 'Nuevo usuario registrado', mensaje: `Se registro un nuevo usuario: ${usuario.nombre || email} (Cliente).`, severidad: 'info' });
+
+    const usuarioPoblado = await User.findById(usuario._id).populate('rol');
+    const token = generarToken(usuarioPoblado);
+    const refreshToken = await generarRefreshToken(usuarioPoblado._id);
+
+    res.status(201).json(formatearUsuario(usuarioPoblado, token, refreshToken));
+  } catch (error) {
+    const { email } = req.body;
+    if (email) {
+      await User.deleteOne({ email });
+    }
+    res.status(500).json({ mensaje: 'Error al registrar usuario', error: error.message });
+  }
+};
+
+/** Inicia sesi�n con credenciales de usuario. */
+const iniciarSesion = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const usuario = await User.findOne({ email }).populate('rol');
+    if (!usuario) {
+      return res.status(400).json({ mensaje: 'Credenciales inv�lidas' });
+    }
+
+    if (usuario.estado === 'inactivo') {
+      return res.status(400).json({ mensaje: 'Cuenta desactivada' });
+    }
+
+    const passwordValida = await usuario.compararPassword(password);
+    if (!passwordValida) {
+      return res.status(400).json({ mensaje: 'Credenciales inv�lidas' });
+    }
+
+    const token = generarToken(usuario);
+    const refreshToken = await generarRefreshToken(usuario._id);
+
+    res.json(formatearUsuario(usuario, token, refreshToken));
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al iniciar sesi�n', error: error.message });
+  }
+};
+
+/** Renueva el token de acceso usando un refresh token. */
+const renovarToken = async (req, res) => {
+  try {
+    const { refreshToken: token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ mensaje: 'Refresh token requerido' });
+    }
+
+    const storedToken = await RefreshToken.findOne({ token, revoked: false }).populate({
+      path: 'usuario',
+      populate: { path: 'rol' }
+    });
+
+    if (!storedToken) {
+      return res.status(401).json({ mensaje: 'Refresh token inv�lido' });
+    }
+
+    if (storedToken.isExpired()) {
+      return res.status(401).json({ mensaje: 'Refresh token expirado, inicie sesi�n nuevamente' });
+    }
+
+    const usuario = storedToken.usuario;
+    const newToken = generarToken(usuario);
+    const newRefreshToken = await generarRefreshToken(usuario._id);
+
+    storedToken.revoked = true;
+    await storedToken.save();
+
+    res.json(formatearUsuario(usuario, newToken, newRefreshToken));
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al renovar token', error: error.message });
+  }
+};
+
+/** Cierra la sesi�n del usuario revocando sus refresh tokens. */
+const cerrarSesion = async (req, res) => {
+  try {
+    const { refreshToken: token } = req.body;
+
+    if (token) {
+      await RefreshToken.updateMany({ usuario: req.user._id, revoked: false }, { revoked: true });
+    }
+
+    res.json({ mensaje: 'Sesi�n cerrada correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cerrar sesi�n', error: error.message });
+  }
+};
+
+module.exports = { registrar, iniciarSesion, renovarToken, cerrarSesion };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

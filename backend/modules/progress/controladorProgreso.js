@@ -1,6 +1,12 @@
-﻿const Progress = require('../../models/Progreso');
+﻿/**
+ * @module Progreso
+ * @description Controlador de progreso físico: registro, historial y último registro.
+ */
+
+const Progress = require('../../models/Progreso');
 const Client = require('../../models/Cliente');
 
+/** Registra un nuevo progreso para un cliente. */
 const create = async (req, res) => {
   try {
     const { clienteId, peso, altura, porcentajeGrasa, medidas, observaciones } = req.body;
@@ -15,6 +21,7 @@ const create = async (req, res) => {
   }
 };
 
+/** Obtiene el historial de progreso de un cliente. */
 const getAll = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -31,6 +38,7 @@ const getAll = async (req, res) => {
   }
 };
 
+/** Obtiene el último registro de progreso del cliente autenticado. */
 const getLast = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });

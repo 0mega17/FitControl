@@ -1,7 +1,13 @@
+/**
+ * @module Calendario
+ * @description Controlador del calendario de entrenamiento: creación, consulta, actualización y eliminación de eventos.
+ */
+
 const WorkoutCalendar = require('../../models/CalendarioEntrenamiento');
 const Trainer = require('../../models/Entrenador');
 const Client = require('../../models/Cliente');
 
+/** Crea un nuevo evento en el calendario de entrenamiento. */
 const create = async (req, res) => {
   try {
     const entrenador = await Trainer.findOne({ usuario: req.user._id });
@@ -13,6 +19,7 @@ const create = async (req, res) => {
   }
 };
 
+/** Obtiene todos los eventos del calendario con filtros opcionales. */
 const getAll = async (req, res) => {
   try {
     const { mes, año, entrenadorId } = req.query;
@@ -39,6 +46,7 @@ const getAll = async (req, res) => {
   }
 };
 
+/** Actualiza un evento del calendario por ID. */
 const update = async (req, res) => {
   try {
     const evento = await WorkoutCalendar.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,6 +57,7 @@ const update = async (req, res) => {
   }
 };
 
+/** Elimina un evento del calendario por ID. */
 const remove = async (req, res) => {
   try {
     await WorkoutCalendar.findByIdAndDelete(req.params.id);

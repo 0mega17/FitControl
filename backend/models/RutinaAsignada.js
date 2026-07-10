@@ -1,3 +1,8 @@
+/**
+ * @module Rutinas
+ * @description Modelos de datos para rutinas asignadas a clientes.
+ */
+
 const mongoose = require('mongoose');
 
 const assignedRoutineSchema = new mongoose.Schema({
@@ -9,5 +14,8 @@ const assignedRoutineSchema = new mongoose.Schema({
 
 assignedRoutineSchema.index({ cliente: 1, estado: 1 });
 
-/** @description Modelo de rutinas asignadas a clientes con control de estado */
+/**
+ * @class RutinaAsignada
+ * @memberof module:Rutinas
+ */
 module.exports = mongoose.model('AssignedRoutine', assignedRoutineSchema);

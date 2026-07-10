@@ -1,10 +1,10 @@
-<<<<<<< HEAD:backend/modules/memberships/memberships.routes.js
+/**
+ * @module Membresias
+ * @description Rutas de membresías: CRUD, semáforo, planes, precios e historial.
+ */
+
 const express = require('express');
-const { createMembership, getAll, getActive, getExpired, getSemaforo, getMyPlan, getMyMemberships, getPrices, updatePrices, updateMembership, renewMembership, cancelMembership, getMyPlanEnhanced, changePlan, getMembershipHistory } = require('./membership.controller');
-=======
-﻿const express = require('express');
 const { createMembership, getAll, getActive, getExpired, getSemaforo, getMyPlan, getMyMemberships, getPrices, updatePrices, updateMembership, renewMembership, cancelMembership, getMyPlanEnhanced, changePlan, getMembershipHistory } = require('./controladorMembresia');
->>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b:backend/modules/memberships/rutasMembresia.js
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');
 

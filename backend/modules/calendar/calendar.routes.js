@@ -3,6 +3,11 @@ const { create, getAll, update, remove } = require('./calendar.controller');
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');
 
+/**
+ * @module Calendario
+ * @description Rutas del calendario de entrenamiento.
+ */
+
 const router = express.Router();
 
 router.post('/', protect, authorize('Administrador', 'Entrenador'), create);

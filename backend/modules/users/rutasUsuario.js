@@ -1,4 +1,9 @@
-﻿const express = require('express');
+﻿/**
+ * @module Usuarios
+ * @description Rutas de usuarios: perfil, listado, actualización, activación/desactivación y cambio de rol.
+ */
+
+const express = require('express');
 const { obtenerPerfil, actualizarPerfil, obtenerUsuarios, actualizarUsuario, desactivarUsuario, activarUsuario, cambiarRol } = require('./controladorUsuario');
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');

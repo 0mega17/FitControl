@@ -1,9 +1,15 @@
+/**
+ * @module Rutinas
+ * @description Controlador de rutinas: CRUD y asignación a clientes.
+ */
+
 const Routine = require('../../models/Rutina');
 const AssignedRoutine = require('../../models/RutinaAsignada');
 const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
 const { createNotification } = require('../../services/servicioNotificaciones');
 
+/** Crea una nueva rutina plantilla. */
 const crear = async (req, res) => {
   try {
     const { nombre, descripcion, nivel, objetivo, grupoMuscularPrincipal, grupoMuscularSecundario, ejercicios } = req.body;
@@ -26,6 +32,7 @@ const crear = async (req, res) => {
   }
 };
 
+/** Obtiene todas las rutinas plantilla activas. */
 const obtenerTodas = async (req, res) => {
   try {
     const rutinas = await Routine.find({ esPlantilla: true })
@@ -37,6 +44,7 @@ const obtenerTodas = async (req, res) => {
   }
 };
 
+/** Obtiene una rutina por ID. */
 const obtenerPorId = async (req, res) => {
   try {
     const rutina = await Routine.findById(req.params.id)
@@ -48,6 +56,7 @@ const obtenerPorId = async (req, res) => {
   }
 };
 
+/** Actualiza una rutina existente. */
 const actualizar = async (req, res) => {
   try {
     const { ejercicios, ...data } = req.body;
@@ -64,6 +73,7 @@ const actualizar = async (req, res) => {
   }
 };
 
+/** Elimina una rutina y sus asignaciones asociadas. */
 const eliminar = async (req, res) => {
   try {
     await AssignedRoutine.deleteMany({ rutina: req.params.id });
@@ -75,6 +85,7 @@ const eliminar = async (req, res) => {
   }
 };
 
+/** Asigna una rutina a un cliente. */
 const asignar = async (req, res) => {
   try {
     const { clienteId } = req.body;
@@ -103,6 +114,7 @@ const asignar = async (req, res) => {
   }
 };
 
+/** Obtiene la rutina activa del cliente autenticado. */
 const miRutina = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -121,6 +133,7 @@ const miRutina = async (req, res) => {
   }
 };
 
+/** Obtiene la lista de clientes con datos de usuario. */
 const listaClientes = async (req, res) => {
   try {
     const clients = await Client.find()

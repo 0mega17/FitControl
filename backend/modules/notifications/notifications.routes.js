@@ -3,6 +3,11 @@ const { create, getMyNotifications, getAll, markAsRead, markAllAsRead, getUnread
 const { protect } = require('../../middleware/autenticacionMiddleware');
 const { authorize } = require('../../middleware/rolMiddleware');
 
+/**
+ * @module Notificaciones
+ * @description Rutas de notificaciones del sistema.
+ */
+
 const router = express.Router();
 
 router.post('/', protect, authorize('Administrador'), create);

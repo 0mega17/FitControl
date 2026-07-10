@@ -1,7 +1,13 @@
-﻿const Usuario = require('../../models/Usuario');
+﻿/**
+ * @module Usuarios
+ * @description Controlador de usuarios: perfil, listado, actualización, activación/desactivación y cambio de rol.
+ */
+
+const Usuario = require('../../models/Usuario');
 const Cliente = require('../../models/Cliente');
 const Entrenador = require('../../models/Entrenador');
 
+/** Obtiene el perfil del usuario autenticado. */
 const obtenerPerfil = async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.user._id).populate('rol');
@@ -22,6 +28,7 @@ const obtenerPerfil = async (req, res) => {
   }
 };
 
+/** Obtiene la lista de usuarios, opcionalmente filtrada por rol. */
 const obtenerUsuarios = async (req, res) => {
   try {
     const { rol } = req.query;
@@ -34,6 +41,7 @@ const obtenerUsuarios = async (req, res) => {
   }
 };
 
+/** Actualiza los datos de un usuario por su ID. */
 const actualizarUsuario = async (req, res) => {
   try {
     const { nombre, apellido, email } = req.body;
@@ -51,6 +59,7 @@ const actualizarUsuario = async (req, res) => {
   }
 };
 
+/** Desactiva un usuario por su ID. */
 const desactivarUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id);
@@ -63,6 +72,7 @@ const desactivarUsuario = async (req, res) => {
   }
 };
 
+/** Activa un usuario previamente desactivado. */
 const activarUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id);
@@ -75,6 +85,7 @@ const activarUsuario = async (req, res) => {
   }
 };
 
+/** Cambia el rol de un usuario. */
 const cambiarRol = async (req, res) => {
   try {
     const { rolId } = req.body;
@@ -98,6 +109,7 @@ const cambiarRol = async (req, res) => {
   }
 };
 
+/** Actualiza el perfil del usuario autenticado. */
 const actualizarPerfil = async (req, res) => {
   try {
     const { nombre, apellido, telefono, fechaNacimiento, direccion, especialidades } = req.body;

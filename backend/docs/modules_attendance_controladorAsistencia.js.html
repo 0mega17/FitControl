@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/attendance/controladorAsistencia.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/attendance/controladorAsistencia.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Asistencia
+ * @description Controlador de asistencia: generación QR, registro y consulta.
+ */
+
+const crypto = require('crypto');
+const Attendance = require('../../models/Asistencia');
+const Client = require('../../models/Cliente');
+const Membership = require('../../models/Membresia');
+
+/** Genera un token QR para registrar asistencia del cliente autenticado. */
+const generateQR = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    if (!cliente) return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+
+    const membresiaActiva = await Membership.findOne({ cliente: cliente._id, estado: 'activa' });
+    if (!membresiaActiva) return res.status(403).json({ mensaje: 'Membresía inactiva o vencida' });
+
+    const qrToken = crypto.randomBytes(20).toString('hex');
+    const hoy = new Date().toISOString().split('T')[0];
+
+    res.json({ qrToken, qrData: JSON.stringify({ clienteId: cliente._id, qrToken, fecha: hoy }) });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al generar QR', error: error.message });
+  }
+};
+
+/** Registra asistencia mediante datos QR escaneados. */
+const registerByQR = async (req, res) => {
+  try {
+    const { qrData } = req.body;
+    const { clienteId } = typeof qrData === 'string' ? JSON.parse(qrData) : qrData;
+
+    const now = new Date();
+    const asistencia = await Attendance.create({
+      cliente: clienteId, fecha: now,
+      horaEntrada: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      metodo: 'QR', presente: true
+    });
+    res.status(201).json(asistencia);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al registrar asistencia QR', error: error.message });
+  }
+};
+
+/** Registra asistencia manual para un cliente específico. */
+const registerManual = async (req, res) => {
+  try {
+    const { clienteId } = req.body;
+    const now = new Date();
+    const asistencia = await Attendance.create({
+      cliente: clienteId, fecha: now,
+      horaEntrada: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      metodo: 'Manual', presente: true
+    });
+    res.status(201).json(asistencia);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al registrar asistencia', error: error.message });
+  }
+};
+
+/** Obtiene las últimas 30 asistencias del cliente autenticado. */
+const getByClient = async (req, res) => {
+  try {
+    const cliente = await Client.findOne({ usuario: req.user._id });
+    const asistencias = await Attendance.find({ cliente: cliente._id })
+      .sort({ fecha: -1 }).limit(30);
+    res.json(asistencias);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener asistencias', error: error.message });
+  }
+};
+
+/** Obtiene todas las asistencias con filtro opcional por fecha. */
+const getAll = async (req, res) => {
+  try {
+    const { fecha } = req.query;
+    let filter = {};
+    if (fecha) {
+      const start = new Date(fecha);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(fecha);
+      end.setHours(23, 59, 59, 999);
+      filter.fecha = { $gte: start, $lte: end };
+    }
+    const asistencias = await Attendance.find(filter)
+      .populate({ path: 'cliente', populate: { path: 'usuario', select: 'nombre apellido' } })
+      .sort({ fecha: -1 });
+    res.json(asistencias);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener asistencias', error: error.message });
+  }
+};
+
+module.exports = { generateQR, registerByQR, registerManual, getByClient, getAll };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

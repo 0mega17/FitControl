@@ -1,5 +1,13 @@
+/**
+ * @module Usuarios
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class Rol
+ * @memberof module:Usuarios
+ */
 const roleSchema = new mongoose.Schema({
   nombre: {
     type: String,
@@ -11,5 +19,4 @@ const roleSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de roles del sistema (Administrador, Entrenador, Cliente) */
 module.exports = mongoose.model('Role', roleSchema);

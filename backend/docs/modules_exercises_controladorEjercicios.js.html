@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/exercises/controladorEjercicios.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/exercises/controladorEjercicios.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>﻿/**
+ * @module Ejercicios
+ * @description Controlador de ejercicios: listado, detalle, partes del cuerpo, músculos y equipamiento.
+ */
+
+const exerciseService = require('../../services/servicioEjercicios');
+const translationService = require('../../services/servicioTraduccion');
+
+/** Lista ejercicios con filtros opcionales y paginación por cursor. */
+const list = async (req, res) => {
+  try {
+    const { cursor, limit = 20, bodyParts, targetMuscles, equipments, name } = req.query;
+
+    const result = await exerciseService.listExercises({
+      cursor,
+      limit: Number(limit),
+      bodyParts,
+      targetMuscles,
+      equipments,
+      name
+    });
+
+    const translated = await translationService.translateExercises(result.data || []);
+
+    res.json({
+      success: true,
+      count: translated.length,
+      total: result.meta?.total || 0,
+      hasNextPage: result.meta?.hasNextPage || false,
+      hasPreviousPage: result.meta?.hasPreviousPage || false,
+      nextCursor: result.meta?.nextCursor || null,
+      results: translated
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener ejercicios', error: error.message });
+  }
+};
+
+/** Obtiene un ejercicio por su ID. */
+const getById = async (req, res) => {
+  try {
+    const result = await exerciseService.getExerciseById(req.params.id);
+    const translated = await translationService.translateExercise(result.data || result);
+    res.json(translated);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener ejercicio', error: error.message });
+  }
+};
+
+/** Obtiene la lista de partes del cuerpo disponibles en los ejercicios. */
+const getBodyParts = async (req, res) => {
+  try {
+    const result = await exerciseService.listExercises({ limit: 200 });
+    const parts = [...new Set((result.data || []).flatMap(ex => ex.bodyParts || []))].sort();
+    const translated = await Promise.all(parts.map(async (p) => ({
+      original: p,
+      traducido: await translationService.translateText(p)
+    })));
+    res.json(translated);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener partes del cuerpo', error: error.message });
+  }
+};
+
+/** Obtiene la lista de músculos objetivo disponibles en los ejercicios. */
+const getTargetMuscles = async (req, res) => {
+  try {
+    const result = await exerciseService.listExercises({ limit: 200 });
+    const muscles = [...new Set((result.data || []).flatMap(ex => ex.targetMuscles || []))].sort();
+    const translated = await Promise.all(muscles.map(async (m) => ({
+      original: m,
+      traducido: await translationService.translateText(m)
+    })));
+    res.json(translated);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener músculos objetivo', error: error.message });
+  }
+};
+
+/** Obtiene la lista de equipamiento disponible en los ejercicios. */
+const getEquipment = async (req, res) => {
+  try {
+    const result = await exerciseService.listExercises({ limit: 200 });
+    const equip = [...new Set((result.data || []).flatMap(ex => ex.equipments || []))].sort();
+    const translated = await Promise.all(equip.map(async (e) => ({
+      original: e,
+      traducido: await translationService.translateText(e)
+    })));
+    res.json(translated);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener equipamiento', error: error.message });
+  }
+};
+
+module.exports = { list, getById, getBodyParts, getTargetMuscles, getEquipment };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

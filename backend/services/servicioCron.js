@@ -1,15 +1,10 @@
-﻿const Notification = require('../models/Notificacion');
+const Notification = require('../models/Notificacion');
 const User = require('../models/Usuario');
 const Membership = require('../models/Membresia');
 const RoutineRequest = require('../models/SolicitudRutina');
 const Client = require('../models/Cliente');
 const { createNotification, notifyAdminsAndTrainers } = require('./servicioNotificaciones');
 
-/**
- * @description Obtiene el ObjectId de usuario a partir del ID de cliente.
- * @param {string} clienteId - ObjectId del documento Client
- * @returns {Promise<string|null>}
- */
 const getClienteUserId = async (clienteId) => {
   try {
     const client = await Client.findById(clienteId);
@@ -17,11 +12,6 @@ const getClienteUserId = async (clienteId) => {
   } catch { return null; }
 };
 
-/**
- * @description Revisa membresías próximas a vencer (7, 3 y 1 día)
- *              y envía notificaciones recordatorias a los clientes.
- * @returns {Promise<void>}
- */
 const checkMembershipExpirations = async () => {
   try {
     const now = new Date();
@@ -74,11 +64,6 @@ const checkMembershipExpirations = async () => {
   }
 };
 
-/**
- * @description Revisa membresías vencidas, notifica a los clientes
- *              y alerta a administradores/entrenadores sobre el total.
- * @returns {Promise<void>}
- */
 const checkExpiredMemberships = async () => {
   try {
     const expired = await Membership.find({ estado: 'vencida' });
@@ -109,11 +94,6 @@ const checkExpiredMemberships = async () => {
   }
 };
 
-/**
- * @description Revisa solicitudes de rutina pendientes por ≥3 días
- *              y alerta a administradores/entrenadores.
- * @returns {Promise<void>}
- */
 const checkStaleRequests = async () => {
   try {
     const stale = await RoutineRequest.find({ estado: 'Pendiente' });
@@ -135,12 +115,6 @@ const checkStaleRequests = async () => {
   }
 };
 
-/**
- * @description Inicia el servicio de verificación programada.
- *              Ejecuta todas las comprobaciones inmediatamente
- *              y luego cada hora mediante setInterval.
- * @returns {void}
- */
 const startScheduledChecks = () => {
   console.log('Servicio de notificaciones programadas iniciado');
 

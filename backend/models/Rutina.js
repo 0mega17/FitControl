@@ -1,3 +1,8 @@
+/**
+ * @module Rutinas
+ * @description Modelos de datos para rutinas de ejercicios.
+ */
+
 const mongoose = require('mongoose');
 
 const ejercicioRutinaSchema = new mongoose.Schema({
@@ -31,5 +36,8 @@ const routineSchema = new mongoose.Schema({
   esPlantilla: { type: Boolean, default: true }
 }, { timestamps: true });
 
-/** @description Modelo de rutinas de ejercicios con sub-documento de ejercicios */
+/**
+ * @class Rutina
+ * @memberof module:Rutinas
+ */
 module.exports = mongoose.model('Routine', routineSchema);

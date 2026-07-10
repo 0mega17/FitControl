@@ -1,5 +1,14 @@
+/**
+ * @module Membresias
+ * @description Esquema de historial de cambios de membresía por cliente.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class HistorialMembresia
+ * @memberof module:Membresias
+ */
 const membershipHistorySchema = new mongoose.Schema({
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
@@ -39,5 +48,4 @@ const membershipHistorySchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de historial de cambios de membresía por cliente */
 module.exports = mongoose.model('MembershipHistory', membershipHistorySchema);

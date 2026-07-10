@@ -1,5 +1,14 @@
+/**
+ * @module Estadisticas
+ * @description Esquema de configuración global del sistema clave-valor.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class Configuracion
+ * @memberof module:Estadisticas
+ */
 const settingsSchema = new mongoose.Schema({
   key: {
     type: String,
@@ -14,5 +23,4 @@ const settingsSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de configuración global del sistema clave-valor */
 module.exports = mongoose.model('Settings', settingsSchema);

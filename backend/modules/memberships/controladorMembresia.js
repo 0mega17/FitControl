@@ -1,3 +1,8 @@
+/**
+ * @module Membresias
+ * @description Controlador de membresías: creación, renovación, consulta de estados.
+ */
+
 const Membership = require('../../models/Membresia');
 const MembershipHistory = require('../../models/HistorialMembresia');
 const Client = require('../../models/Cliente');
@@ -7,6 +12,7 @@ const Plan = require('../../models/Plan');
 const Settings = require('../../models/Configuracion');
 const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
 
+/** Calcula la fecha de vencimiento según el tipo de membresía. */
 const calcularVencimiento = (tipo) => {
   const ahora = new Date();
   switch (tipo) {
@@ -33,6 +39,7 @@ const PRECIOS_DEFAULTS = {
   Anual: 1200
 };
 
+/** Obtiene los precios de membresías desde la configuración o usa valores por defecto. */
 const obtenerPrecios = async () => {
   try {
     const config = await Settings.findOne({ key: 'membershipPrices' });
@@ -42,6 +49,7 @@ const obtenerPrecios = async () => {
   }
 };
 
+/** Crea una nueva membresía para un cliente. */
 const createMembership = async (req, res) => {
   try {
     const { tipo, clienteEmail, metodoPago } = req.body;
@@ -89,6 +97,7 @@ const createMembership = async (req, res) => {
   }
 };
 
+/** Obtiene todas las membresías registradas. */
 const getAll = async (req, res) => {
   try {
     const membresias = await Membership.find()
@@ -100,6 +109,7 @@ const getAll = async (req, res) => {
   }
 };
 
+/** Obtiene las membresías activas. */
 const getActive = async (req, res) => {
   try {
     const membresias = await Membership.find({ estado: 'activa' })
@@ -111,6 +121,7 @@ const getActive = async (req, res) => {
   }
 };
 
+/** Obtiene las membresías vencidas. */
 const getExpired = async (req, res) => {
   try {
     const membresias = await Membership.find({ estado: 'vencida' })
@@ -122,6 +133,7 @@ const getExpired = async (req, res) => {
   }
 };
 
+/** Obtiene el semáforo de membresías según su estado y vencimiento. */
 const getSemaforo = async (req, res) => {
   try {
     await Membership.updateMany(
@@ -159,6 +171,7 @@ const PLAN_MAP = {
   Anual: 'Premium'
 };
 
+/** Obtiene el plan actual del cliente autenticado. */
 const getMyPlan = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -180,6 +193,7 @@ const getMyPlan = async (req, res) => {
   }
 };
 
+/** Obtiene las membresías y pagos del cliente autenticado. */
 const getMyMemberships = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -198,6 +212,7 @@ const getMyMemberships = async (req, res) => {
   }
 };
 
+/** Obtiene los precios configurados de las membresías. */
 const getPrices = async (req, res) => {
   try {
     const precios = await obtenerPrecios();
@@ -207,6 +222,7 @@ const getPrices = async (req, res) => {
   }
 };
 
+/** Actualiza los precios de las membresías. */
 const updatePrices = async (req, res) => {
   try {
     const precios = req.body;
@@ -234,6 +250,7 @@ const updatePrices = async (req, res) => {
   }
 };
 
+/** Actualiza los datos de una membresía existente. */
 const updateMembership = async (req, res) => {
   try {
     const { tipo, precio, estado } = req.body;
@@ -254,6 +271,7 @@ const updateMembership = async (req, res) => {
   }
 };
 
+/** Renueva una membresía existente. */
 const renewMembership = async (req, res) => {
   try {
     const membresia = await Membership.findById(req.params.id);
@@ -282,6 +300,7 @@ const renewMembership = async (req, res) => {
   }
 };
 
+/** Cancela una membresía existente. */
 const cancelMembership = async (req, res) => {
   try {
     const membresia = await Membership.findById(req.params.id);
@@ -296,6 +315,7 @@ const cancelMembership = async (req, res) => {
   }
 };
 
+/** Obtiene el plan del cliente autenticado con información detallada e historial. */
 const getMyPlanEnhanced = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -330,6 +350,7 @@ const getMyPlanEnhanced = async (req, res) => {
   }
 };
 
+/** Cambia el plan del cliente autenticado a un nuevo plan. */
 const changePlan = async (req, res) => {
   try {
     const { planId } = req.body;
@@ -396,6 +417,7 @@ const changePlan = async (req, res) => {
   }
 };
 
+/** Obtiene el historial de membresías del cliente autenticado. */
 const getMembershipHistory = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });

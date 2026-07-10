@@ -1,3 +1,8 @@
+/**
+ * @module Usuarios
+ * @description Rutas de usuarios: perfil, listado, actualización, activación/desactivación y cambio de rol.
+ */
+
 const express = require('express');
 const { getProfile, updateProfile, getAllUsers, updateUser, deactivateUser, activateUser, changeUserRole } = require('./user.controller');
 const { protect } = require('../../middleware/autenticacionMiddleware');

@@ -2,6 +2,11 @@
 const { create, getAll, getLast } = require('./controladorProgreso');
 const { protect } = require('../../middleware/autenticacionMiddleware');
 
+/**
+ * @module Progreso
+ * @description Rutas de progreso físico: registro, historial y último registro.
+ */
+
 const router = express.Router();
 
 router.post('/', protect, create);

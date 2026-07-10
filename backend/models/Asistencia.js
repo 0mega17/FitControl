@@ -1,3 +1,8 @@
+/**
+ * @module Asistencia
+ * @description Modelos de datos para registros de asistencia.
+ */
+
 const mongoose = require('mongoose');
 
 const attendanceSchema = new mongoose.Schema({
@@ -12,5 +17,8 @@ const attendanceSchema = new mongoose.Schema({
 
 attendanceSchema.index({ cliente: 1, fecha: -1 });
 
-/** @description Modelo de registro de asistencia con soporte QR y manual */
+/**
+ * @class Asistencia
+ * @memberof module:Asistencia
+ */
 module.exports = mongoose.model('Attendance', attendanceSchema);

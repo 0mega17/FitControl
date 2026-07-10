@@ -1,3 +1,8 @@
+/**
+ * @module Autenticacion
+ * @description Controlador de autenticación: registro, inicio de sesión, renovación de token y cierre de sesión.
+ */
+
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../../models/Usuario');
@@ -43,6 +48,7 @@ const formatearUsuario = (usuario, token, refreshToken) => ({
   refreshToken
 });
 
+/** Registra un nuevo usuario en el sistema. */
 const register = async (req, res) => {
   try {
     const { nombre, apellido, email, password, objetivo, edad, estatura, peso, experiencia, planId } = req.body;
@@ -130,6 +136,7 @@ const register = async (req, res) => {
   }
 };
 
+/** Inicia sesión con credenciales de usuario. */
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -157,6 +164,7 @@ const login = async (req, res) => {
   }
 };
 
+/** Renueva el token de acceso usando un refresh token. */
 const refreshToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
@@ -191,6 +199,7 @@ const refreshToken = async (req, res) => {
   }
 };
 
+/** Cierra la sesión del usuario revocando sus refresh tokens. */
 const logout = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/users/user.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/users/user.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Usuarios
+ * @description Controlador de usuarios: perfil, listado, actualización, activación/desactivación y cambio de rol.
+ */
+
+const User = require('../../models/Usuario');
+const Client = require('../../models/Cliente');
+const Trainer = require('../../models/Entrenador');
+const Role = require('../../models/Rol');
+
+/** Obtiene el perfil del usuario autenticado. */
+const getProfile = async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user._id).populate('rol');
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    let perfilExtra = null;
+    if (usuario.rol.nombre === 'Cliente') {
+      perfilExtra = await Client.findOne({ usuario: usuario._id });
+    } else if (usuario.rol.nombre === 'Entrenador') {
+      perfilExtra = await Trainer.findOne({ usuario: usuario._id });
+    }
+
+    res.json({ usuario, perfilExtra });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener perfil', error: error.message });
+  }
+};
+
+/** Obtiene la lista de usuarios, opcionalmente filtrada por rol. */
+const getAllUsers = async (req, res) => {
+  try {
+    const { rol } = req.query;
+    const filter = rol ? { 'rol.nombre': rol } : {};
+    const usuarios = await User.find().populate('rol', 'nombre').select('-password');
+    const filtered = rol ? usuarios.filter(u => u.rol?.nombre === rol) : usuarios;
+    res.json(filtered);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener usuarios', error: error.message });
+  }
+};
+
+/** Actualiza los datos de un usuario por su ID. */
+const updateUser = async (req, res) => {
+  try {
+    const { nombre, apellido, email } = req.body;
+    const usuario = await User.findById(req.params.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    if (nombre !== undefined) usuario.nombre = nombre;
+    if (apellido !== undefined) usuario.apellido = apellido;
+    if (email !== undefined) usuario.email = email;
+    await usuario.save();
+
+    res.json({ mensaje: 'Usuario actualizado correctamente', usuario });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar usuario', error: error.message });
+  }
+};
+
+/** Desactiva un usuario por su ID. */
+const deactivateUser = async (req, res) => {
+  try {
+    const usuario = await User.findById(req.params.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    usuario.estado = 'inactivo';
+    await usuario.save();
+    res.json({ mensaje: 'Usuario desactivado correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al desactivar usuario', error: error.message });
+  }
+};
+
+/** Activa un usuario previamente desactivado. */
+const activateUser = async (req, res) => {
+  try {
+    const usuario = await User.findById(req.params.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    usuario.estado = 'activo';
+    await usuario.save();
+    res.json({ mensaje: 'Usuario activado correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al activar usuario', error: error.message });
+  }
+};
+
+/** Cambia el rol de un usuario. */
+const changeUserRole = async (req, res) => {
+  try {
+    const { rolId } = req.body;
+    const rol = await Role.findById(rolId);
+    if (!rol) return res.status(404).json({ mensaje: 'Rol no encontrado' });
+
+    const usuario = await User.findById(req.params.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    usuario.rol = rol._id;
+    await usuario.save();
+
+    if (usuario.rol.nombre !== 'Cliente') {
+      await Client.findOneAndDelete({ usuario: usuario._id });
+    }
+
+    res.json({ mensaje: 'Rol actualizado correctamente', usuario });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cambiar rol', error: error.message });
+  }
+};
+
+/** Actualiza el perfil del usuario autenticado. */
+const updateProfile = async (req, res) => {
+  try {
+    const { nombre, apellido, telefono, fechaNacimiento, direccion, especialidades } = req.body;
+
+    const usuario = await User.findById(req.user._id).populate('rol');
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    if (nombre) usuario.nombre = nombre;
+    if (apellido) usuario.apellido = apellido;
+    await usuario.save();
+
+    if (usuario.rol.nombre === 'Cliente') {
+      const cliente = await Client.findOne({ usuario: usuario._id });
+      if (cliente) {
+        if (telefono !== undefined) cliente.telefono = telefono;
+        if (fechaNacimiento !== undefined) cliente.fechaNacimiento = fechaNacimiento;
+        if (direccion !== undefined) cliente.direccion = direccion;
+        await cliente.save();
+      }
+    } else if (usuario.rol.nombre === 'Entrenador') {
+      const entrenador = await Trainer.findOne({ usuario: usuario._id });
+      if (entrenador) {
+        if (telefono !== undefined) entrenador.telefono = telefono;
+        if (especialidades !== undefined) entrenador.especialidades = especialidades;
+        await entrenador.save();
+      }
+    }
+
+    res.json({ mensaje: 'Perfil actualizado correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar perfil', error: error.message });
+  }
+};
+
+module.exports = { getProfile, updateProfile, getAllUsers, updateUser, deactivateUser, activateUser, changeUserRole };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Asistencia.html">Asistencia</a></li><li><a href="module-Autenticacion.html">Autenticacion</a></li><li><a href="module-Calendario.html">Calendario</a></li><li><a href="module-Configuracion.html">Configuracion</a></li><li><a href="module-Ejercicios.html">Ejercicios</a></li><li><a href="module-Estadisticas.html">Estadisticas</a></li><li><a href="module-Membresias.html">Membresias</a></li><li><a href="module-Notificaciones.html">Notificaciones</a></li><li><a href="module-Pagos.html">Pagos</a></li><li><a href="module-Planes.html">Planes</a></li><li><a href="module-Progreso.html">Progreso</a></li><li><a href="module-Rutinas.html">Rutinas</a></li><li><a href="module-SolicitudesRutinas.html">SolicitudesRutinas</a></li><li><a href="module-Usuarios.html">Usuarios</a></li></ul><h3>Classes</h3><ul><li><a href="module-Asistencia.Asistencia.html">Asistencia</a></li><li><a href="module-Calendario.CalendarioEntrenamiento.html">CalendarioEntrenamiento</a></li><li><a href="module-Calendario.ClaseGrupal.html">ClaseGrupal</a></li><li><a href="module-Calendario.Reserva.html">Reserva</a></li><li><a href="module-Estadisticas.Configuracion.html">Configuracion</a></li><li><a href="module-Membresias.HistorialMembresia.html">HistorialMembresia</a></li><li><a href="module-Membresias.Membresia.html">Membresia</a></li><li><a href="module-Notificaciones.Notificacion.html">Notificacion</a></li><li><a href="module-Pagos.Pago.html">Pago</a></li><li><a href="module-Planes.Plan.html">Plan</a></li><li><a href="module-Progreso.Progreso.html">Progreso</a></li><li><a href="module-Rutinas.Rutina.html">Rutina</a></li><li><a href="module-Rutinas.RutinaAsignada.html">RutinaAsignada</a></li><li><a href="module-SolicitudesRutinas.SolicitudRutina.html">SolicitudRutina</a></li><li><a href="module-Usuarios.Cliente.html">Cliente</a></li><li><a href="module-Usuarios.Entrenador.html">Entrenador</a></li><li><a href="module-Usuarios.Rol.html">Rol</a></li><li><a href="module-Usuarios.Usuario.html">Usuario</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Jul 09 2026 22:07:29 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

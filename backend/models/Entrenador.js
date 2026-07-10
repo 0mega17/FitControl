@@ -19,5 +19,13 @@ const trainerSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de datos extendidos del perfil de entrenador */
+/**
+ * @module Usuarios
+ * @description Modelo de datos extendidos del perfil de entrenador.
+ */
+
+/**
+ * @class Entrenador
+ * @memberof module:Usuarios
+ */
 module.exports = mongoose.model('Trainer', trainerSchema);

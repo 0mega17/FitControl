@@ -1,5 +1,14 @@
+/**
+ * @module Planes
+ * @description Esquema de planes de membresía con precio, duración y beneficios.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @class Plan
+ * @memberof module:Planes
+ */
 const planSchema = new mongoose.Schema({
   nombre: {
     type: String,
@@ -32,5 +41,4 @@ const planSchema = new mongoose.Schema({
   timestamps: true
 });
 
-/** @description Modelo de planes de membresía con precio, duración y beneficios */
 module.exports = mongoose.model('Plan', planSchema);

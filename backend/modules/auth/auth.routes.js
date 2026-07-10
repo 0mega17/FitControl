@@ -1,3 +1,8 @@
+/**
+ * @module Autenticacion
+ * @description Rutas de autenticación: registro, inicio de sesión, renovación de token y cierre de sesión.
+ */
+
 const express = require('express');
 const { body } = require('express-validator');
 const { register, login, refreshToken, logout } = require('./auth.controller');

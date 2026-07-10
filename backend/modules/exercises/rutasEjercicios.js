@@ -2,6 +2,11 @@
 const { list, getById, getBodyParts, getTargetMuscles, getEquipment } = require('./controladorEjercicios');
 const { protect } = require('../../middleware/autenticacionMiddleware');
 
+/**
+ * @module Ejercicios
+ * @description Rutas de ejercicios: listado, detalle, partes del cuerpo, músculos y equipamiento.
+ */
+
 const router = express.Router();
 
 router.get('/', protect, list);

@@ -1,5 +1,11 @@
+/**
+ * @module Planes
+ * @description Controlador de planes: CRUD de planes de membresía.
+ */
+
 const Plan = require('../../models/Plan');
 
+/** Obtiene todos los planes disponibles. */
 exports.getAllPlans = async (req, res) => {
   try {
     const filter = req.user?.rol?.nombre === 'Administrador' ? {} : { activo: true };
@@ -10,6 +16,7 @@ exports.getAllPlans = async (req, res) => {
   }
 };
 
+/** Obtiene un plan por su ID. */
 exports.getPlan = async (req, res) => {
   try {
     const plan = await Plan.findById(req.params.id);
@@ -23,6 +30,7 @@ exports.getPlan = async (req, res) => {
   }
 };
 
+/** Crea un nuevo plan. */
 exports.createPlan = async (req, res) => {
   try {
     const { nombre, precio, duracionDias, beneficios, descripcion } = req.body;
@@ -34,6 +42,7 @@ exports.createPlan = async (req, res) => {
   }
 };
 
+/** Actualiza un plan existente. */
 exports.updatePlan = async (req, res) => {
   try {
     const { nombre, precio, duracionDias, beneficios, descripcion, activo } = req.body;
@@ -49,6 +58,7 @@ exports.updatePlan = async (req, res) => {
   }
 };
 
+/** Elimina un plan por su ID. */
 exports.deletePlan = async (req, res) => {
   try {
     const plan = await Plan.findByIdAndDelete(req.params.id);
