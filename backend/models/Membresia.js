@@ -40,6 +40,10 @@ const membershipSchema = new mongoose.Schema({
   timestamps: true
 });
 
+/**
+ * @description Verifica si la membresía está vencida y actualiza su estado.
+ * @returns {Promise<Object>|undefined} Documento guardado si se actualizó
+ */
 membershipSchema.methods.verificarEstado = function () {
   if (this.fechaVencimiento < new Date() && this.estado === 'activa') {
     this.estado = 'vencida';
@@ -47,4 +51,5 @@ membershipSchema.methods.verificarEstado = function () {
   }
 };
 
+/** @description Modelo de membresías con control de estado y verificación de vencimiento */
 module.exports = mongoose.model('Membership', membershipSchema);

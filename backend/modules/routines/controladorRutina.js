@@ -4,6 +4,13 @@ const Client = require('../../models/Cliente');
 const User = require('../../models/Usuario');
 const { createNotification } = require('../../services/servicioNotificaciones');
 
+/**
+ * @description Crea una nueva rutina como plantilla con ejercicios ordenados.
+ * @route POST /api/routines
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const crear = async (req, res) => {
   try {
     const { nombre, descripcion, nivel, objetivo, grupoMuscularPrincipal, grupoMuscularSecundario, ejercicios } = req.body;
@@ -26,6 +33,13 @@ const crear = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene todas las rutinas plantilla disponibles.
+ * @route GET /api/routines
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const obtenerTodas = async (req, res) => {
   try {
     const rutinas = await Routine.find({ esPlantilla: true })
@@ -37,6 +51,13 @@ const obtenerTodas = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene una rutina por su ID.
+ * @route GET /api/routines/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const obtenerPorId = async (req, res) => {
   try {
     const rutina = await Routine.findById(req.params.id)
@@ -48,6 +69,13 @@ const obtenerPorId = async (req, res) => {
   }
 };
 
+/**
+ * @description Actualiza los datos de una rutina, incluyendo ejercicios.
+ * @route PUT /api/routines/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const actualizar = async (req, res) => {
   try {
     const { ejercicios, ...data } = req.body;
@@ -64,6 +92,13 @@ const actualizar = async (req, res) => {
   }
 };
 
+/**
+ * @description Elimina una rutina y todas sus asignaciones asociadas.
+ * @route DELETE /api/routines/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const eliminar = async (req, res) => {
   try {
     await AssignedRoutine.deleteMany({ rutina: req.params.id });
@@ -75,6 +110,13 @@ const eliminar = async (req, res) => {
   }
 };
 
+/**
+ * @description Asigna una rutina a un cliente. Verifica duplicados activos.
+ * @route POST /api/routines/:id/assign
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const asignar = async (req, res) => {
   try {
     const { clienteId } = req.body;
@@ -103,6 +145,13 @@ const asignar = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene la rutina activa asignada al cliente autenticado.
+ * @route GET /api/routines/mi-rutina
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const miRutina = async (req, res) => {
   try {
     const cliente = await Client.findOne({ usuario: req.user._id });
@@ -121,6 +170,13 @@ const miRutina = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene la lista de clientes para asignación de rutinas.
+ * @route GET /api/routines/clientes/lista
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const listaClientes = async (req, res) => {
   try {
     const clients = await Client.find()
