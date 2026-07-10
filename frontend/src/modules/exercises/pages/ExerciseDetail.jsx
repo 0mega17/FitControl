@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { exercisesAPI } from '../../services/api'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { exercisesAPI } from '../../../services/api'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 const MUSCLE_COLORS = {
   chest: 'success', back: 'info', shoulders: 'warning',

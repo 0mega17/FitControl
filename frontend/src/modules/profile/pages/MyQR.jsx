@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Button from '../../components/ui/Button'
-import { Card } from '../../components/ui/Card'
-import { Spinner } from '../../components/ui/Spinner'
-import { attendanceAPI } from '../../services/api'
+import Button from '../../../components/ui/Button'
+import { Card } from '../../../components/ui/Card'
+import { Spinner } from '../../../components/ui/Spinner'
+import { attendanceAPI } from '../../../services/api'
 
 function MyQR() {
   const [qrData, setQrData] = useState(null)

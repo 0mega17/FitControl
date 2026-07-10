@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { usersAPI } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
-import Button from '../../components/ui/Button'
-import Modal from '../../components/ui/Modal'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
-import { Input, Select } from '../../components/ui/Input'
-import { Table, Td } from '../../components/ui/Table'
-import { useToast } from '../../context/ToastContext'
+import { usersAPI } from '../../../services/api'
+import { useAuth } from '../../../context/AuthContext'
+import Button from '../../../components/ui/Button'
+import Modal from '../../../components/ui/Modal'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
+import { Input, Select } from '../../../components/ui/Input'
+import { Table, Td } from '../../../components/ui/Table'
+import { useToast } from '../../../context/ToastContext'
 
 function AdminUsers() {
   const [usuarios, setUsuarios] = useState([])

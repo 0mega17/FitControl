@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { routineRequestsAPI } from '../../services/api'
-import { useToast } from '../../context/ToastContext'
-import { Input, Select } from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
+import { routineRequestsAPI } from '../../../services/api'
+import { useToast } from '../../../context/ToastContext'
+import { Input, Select } from '../../../components/ui/Input'
+import Button from '../../../components/ui/Button'
 
 const OBJETIVOS = [
   'Ganar masa muscular',

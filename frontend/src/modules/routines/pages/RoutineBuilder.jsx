@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { routinesAPI, routineRequestsAPI } from '../../services/api'
-import { useToast } from '../../context/ToastContext'
+import { routinesAPI, routineRequestsAPI } from '../../../services/api'
+import { useToast } from '../../../context/ToastContext'
 import ExerciseLibrary from '../components/ExerciseLibrary'
 import RoutineConstructor from '../components/RoutineConstructor'
-import { Input, Select } from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
+import { Input, Select } from '../../../components/ui/Input'
+import Button from '../../../components/ui/Button'
 
 const NIVELES = ['principiante', 'intermedio', 'avanzado']
 const OBJETIVOS = ['hipertrofia', 'fuerza', 'resistencia', 'definicion']

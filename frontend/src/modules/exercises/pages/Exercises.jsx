@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { exercisesAPI } from '../../services/api'
-import ExerciseCard from '../../components/ui/ExerciseCard'
-import { Input, Select } from '../../components/ui/Input'
-import Button from '../../components/ui/Button'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { exercisesAPI } from '../../../services/api'
+import ExerciseCard from '../../../components/ui/ExerciseCard'
+import { Input, Select } from '../../../components/ui/Input'
+import Button from '../../../components/ui/Button'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 const LIMIT = 20
 

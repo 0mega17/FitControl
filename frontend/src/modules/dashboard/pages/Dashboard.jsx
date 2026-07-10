@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { reportsAPI } from '../../services/api'
-import { Card } from '../../components/ui/Card'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { reportsAPI } from '../../../services/api'
+import { Card } from '../../../components/ui/Card'
+import { PageSpinner } from '../../../components/ui/Spinner'
 import {
   FiUsers, FiUserCheck, FiCheckCircle, FiAlertTriangle,
   FiXCircle, FiClipboard, FiDollarSign

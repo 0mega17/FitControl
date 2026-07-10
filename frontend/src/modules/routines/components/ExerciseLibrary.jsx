@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { exercisesAPI } from '../../../services/api'
-import { Input, Select } from '../../ui/Input'
-import Button from '../../ui/Button'
-import Badge from '../../ui/Badge'
+import { Input, Select } from '../../../components/ui/Input'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
 
 const MUSCLE_COLORS = {
   chest: 'success', pecho: 'success',

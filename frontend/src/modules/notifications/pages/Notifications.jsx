@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { notificationsAPI } from '../../services/api'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { notificationsAPI } from '../../../services/api'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 const SEVERIDAD_LABELS = { info: 'Informacion', warning: 'Advertencia', urgent: 'Urgente' }
 const SEVERIDAD_COLORS = { info: 'info', warning: 'warning', urgent: 'danger' }

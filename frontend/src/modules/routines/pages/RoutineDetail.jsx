@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { routinesAPI } from '../../services/api'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { routinesAPI } from '../../../services/api'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 const NIVEL_COLORS = { principiante: 'success', intermedio: 'warning', avanzado: 'danger' }
 const OBJETIVO_LABELS = { hipertrofia: 'Hipertrofia', fuerza: 'Fuerza', resistencia: 'Resistencia', definicion: 'Definicion' }

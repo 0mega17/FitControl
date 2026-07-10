@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { attendanceAPI } from '../../services/api'
-import { PageSpinner } from '../../components/ui/Spinner'
-import Badge from '../../components/ui/Badge'
-import { Table, Td } from '../../components/ui/Table'
+import { attendanceAPI } from '../../../services/api'
+import { PageSpinner } from '../../../components/ui/Spinner'
+import Badge from '../../../components/ui/Badge'
+import { Table, Td } from '../../../components/ui/Table'
 
 function Attendance() {
   const [asistencias, setAsistencias] = useState([])

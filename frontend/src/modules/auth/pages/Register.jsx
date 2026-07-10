@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import Button from '../../components/ui/Button'
-import { Input } from '../../components/ui/Input'
-import { useToast } from '../../context/ToastContext'
-import { plansAPI } from '../../services/api'
-import { Spinner } from '../../components/ui/Spinner'
-import { formatCOP } from '../../utils/format'
+import { useAuth } from '../../../context/AuthContext'
+import Button from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { useToast } from '../../../context/ToastContext'
+import { plansAPI } from '../../../services/api'
+import { Spinner } from '../../../components/ui/Spinner'
+import { formatCOP } from '../../../utils/format'
 
 const OBJETIVOS = [
   'Quemar grasa',

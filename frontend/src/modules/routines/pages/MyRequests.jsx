@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { routineRequestsAPI } from '../../services/api'
-import { PageSpinner } from '../../components/ui/Spinner'
-import Badge from '../../components/ui/Badge'
-import Button from '../../components/ui/Button'
-import { useAuth } from '../../context/AuthContext'
+import { routineRequestsAPI } from '../../../services/api'
+import { PageSpinner } from '../../../components/ui/Spinner'
+import Badge from '../../../components/ui/Badge'
+import Button from '../../../components/ui/Button'
+import { useAuth } from '../../../context/AuthContext'
 
 const ESTADO_COLORS = {
   'Pendiente': 'warning',

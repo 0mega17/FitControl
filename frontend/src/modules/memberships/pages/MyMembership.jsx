@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { membershipsAPI } from '../../services/api'
-import { formatCOP } from '../../utils/format'
-import { Card, CardTitle } from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
-import { Table, Td } from '../../components/ui/Table'
-import { useToast } from '../../context/ToastContext'
+import { membershipsAPI } from '../../../services/api'
+import { formatCOP } from '../../../utils/format'
+import { Card, CardTitle } from '../../../components/ui/Card'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
+import { Table, Td } from '../../../components/ui/Table'
+import { useToast } from '../../../context/ToastContext'
 
 function MyMembership() {
   const [data, setData] = useState(null)

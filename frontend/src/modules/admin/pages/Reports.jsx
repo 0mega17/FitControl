@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { reportsAPI } from '../../services/api'
-import { Card, CardTitle } from '../../components/ui/Card'
-import { Input } from '../../components/ui/Input'
-import { Table, Td } from '../../components/ui/Table'
-import Badge from '../../components/ui/Badge'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { reportsAPI } from '../../../services/api'
+import { Card, CardTitle } from '../../../components/ui/Card'
+import { Input } from '../../../components/ui/Input'
+import { Table, Td } from '../../../components/ui/Table'
+import Badge from '../../../components/ui/Badge'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 function Reports() {
   const [report, setReport] = useState(null)

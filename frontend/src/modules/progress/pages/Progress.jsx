@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { progressAPI } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
-import { Card, CardTitle } from '../../components/ui/Card'
-import Button from '../../components/ui/Button'
-import { Input, Textarea } from '../../components/ui/Input'
-import { Table, Td } from '../../components/ui/Table'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { progressAPI } from '../../../services/api'
+import { useAuth } from '../../../context/AuthContext'
+import { Card, CardTitle } from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
+import { Input, Textarea } from '../../../components/ui/Input'
+import { Table, Td } from '../../../components/ui/Table'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 function Progress() {
   const [progresos, setProgresos] = useState([])

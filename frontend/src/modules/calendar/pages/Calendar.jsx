@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import Button from '../../components/ui/Button'
-import { Input, Select, Textarea } from '../../components/ui/Input'
-import { Card, CardTitle } from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import Modal from '../../components/ui/Modal'
-import { PageSpinner } from '../../components/ui/Spinner'
-import { calendarAPI } from '../../services/api'
+import Button from '../../../components/ui/Button'
+import { Input, Select, Textarea } from '../../../components/ui/Input'
+import { Card, CardTitle } from '../../../components/ui/Card'
+import Badge from '../../../components/ui/Badge'
+import Modal from '../../../components/ui/Modal'
+import { PageSpinner } from '../../../components/ui/Spinner'
+import { calendarAPI } from '../../../services/api'
 
 function Calendar() {
   const [eventos, setEventos] = useState([])

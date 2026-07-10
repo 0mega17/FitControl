@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { routinesAPI } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
-import { useToast } from '../../context/ToastContext'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
-import Modal from '../../components/ui/Modal'
-import { Select } from '../../components/ui/Input'
-import { PageSpinner } from '../../components/ui/Spinner'
+import { routinesAPI } from '../../../services/api'
+import { useAuth } from '../../../context/AuthContext'
+import { useToast } from '../../../context/ToastContext'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import Modal from '../../../components/ui/Modal'
+import { Select } from '../../../components/ui/Input'
+import { PageSpinner } from '../../../components/ui/Spinner'
 
 const NIVEL_COLORS = { principiante: 'success', intermedio: 'warning', avanzado: 'danger' }
 const OBJETIVO_LABELS = { hipertrofia: 'Hipertrofia', fuerza: 'Fuerza', resistencia: 'Resistencia', definicion: 'Definicion' }
