@@ -39,4 +39,5 @@ const membershipHistorySchema = new mongoose.Schema({
   timestamps: true
 });
 
+/** @description Modelo de historial de cambios de membresía por cliente */
 module.exports = mongoose.model('MembershipHistory', membershipHistorySchema);

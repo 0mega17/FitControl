@@ -2,6 +2,14 @@
 const Role = require('../../models/Rol');
 const Membership = require('../../models/Membresia');
 
+/**
+ * @description Obtiene estadísticas del dashboard: clientes activos, entrenadores,
+ *              membresías activas y vencidas. Actualiza membresías vencidas automáticamente.
+ * @route GET /api/dashboard
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getStats = async (req, res) => {
   try {
     const rolCliente = await Role.findOne({ nombre: 'Cliente' });
