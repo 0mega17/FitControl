@@ -14,6 +14,11 @@ app.use(express.json());
 
 connectDB();
 
+/**
+ * @description Siembra los roles por defecto (Administrador, Entrenador, Cliente)
+ *              usando upsert para evitar duplicados.
+ * @returns {Promise<void>}
+ */
 const seedRoles = async () => {
   const roles = ['Administrador', 'Entrenador', 'Cliente'];
   for (const nombre of roles) {
@@ -27,6 +32,11 @@ const seedRoles = async () => {
 };
 seedRoles();
 
+/**
+ * @description Siembra los planes de membresía por defecto
+ *              (Básico, Estándar, Premium, Trimestral, Anual).
+ * @returns {Promise<void>}
+ */
 const seedPlans = async () => {
   const defaultPlans = [
     { nombre: 'Básico', precio: 70000, duracionDias: 30, beneficios: ['Acceso al gimnasio en horario regular', 'Vestidores y regaderas'], descripcion: 'Plan ideal para quienes inician', activo: true },
@@ -46,9 +56,8 @@ const seedPlans = async () => {
 };
 seedPlans();
 
-app.use('/api/auth', require('./modules/auth/auth.routes'));
-app.use('/api/auth', require('./modules/auth/auth.routes'));
-app.use('/api/users', require('./modules/users/users.routes'));
+app.use('/api/auth', require('./modules/auth/rutasAuth'));
+app.use('/api/users', require('./modules/users/rutasUsuario'));
 app.use('/api/memberships', require('./modules/memberships/memberships.routes'));
 app.use('/api/dashboard', require('./modules/dashboard/dashboard.routes'));
 app.use('/api/routines', require('./modules/routines/routines.routes'));

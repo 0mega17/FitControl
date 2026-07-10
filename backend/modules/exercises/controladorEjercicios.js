@@ -1,6 +1,13 @@
 ﻿const exerciseService = require('../../services/servicioEjercicios');
 const translationService = require('../../services/servicioTraduccion');
 
+/**
+ * @description Obtiene ejercicios paginados desde ExerciseDB API con traducción al español.
+ * @route GET /api/exercises
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const list = async (req, res) => {
   try {
     const { cursor, limit = 20, bodyParts, targetMuscles, equipments, name } = req.query;
@@ -31,6 +38,13 @@ const list = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene un ejercicio por ID con traducción al español.
+ * @route GET /api/exercises/:id
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getById = async (req, res) => {
   try {
     const result = await exerciseService.getExerciseById(req.params.id);
@@ -41,6 +55,13 @@ const getById = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene lista de partes del cuerpo disponibles con traducción.
+ * @route GET /api/exercises/body-parts
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getBodyParts = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });
@@ -55,6 +76,13 @@ const getBodyParts = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene lista de músculos objetivo disponibles con traducción.
+ * @route GET /api/exercises/target-muscles
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getTargetMuscles = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });
@@ -69,6 +97,13 @@ const getTargetMuscles = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene lista de equipamiento disponible con traducción.
+ * @route GET /api/exercises/equipment
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const getEquipment = async (req, res) => {
   try {
     const result = await exerciseService.listExercises({ limit: 200 });

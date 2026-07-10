@@ -558,13 +558,59 @@ const DICT = new Map([
   ['barbell wrist curl', 'curl de muñeca con barra'],
 ]);
 
+/**
+ * @description Busca una traducción en el diccionario interno DICT.
+ * @param {string} text - Texto en inglés
+ * @returns {string|null}
+ */
 const translateWithDict = (text) => {
   const lower = text.toLowerCase().trim();
   return DICT.get(lower) || null;
 };
 
+<<<<<<< HEAD
+=======
+const translateWithMyMemory = async (text) => {
+  try {
+    const { data } = await axios.get(
+      'https://api.mymemory.translated.net/get',
+      { params: { q: text, langpair: 'en|es' }, timeout: 3000 }
+    );
+    return data?.responseData?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
+const translateWithGoogle = async (text) => {
+  const key = process.env.GOOGLE_TRANSLATE_API_KEY;
+  if (!key) return null;
+  try {
+    const { data } = await axios.post(
+      `https://translation.googleapis.com/language/translate/v2?key=${key}`,
+      { q: text, target: 'es', source: 'en' },
+      { timeout: 5000 }
+    );
+    return data?.data?.translations?.[0]?.translatedText || null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * @description Elimina el prefijo "Step:NN" de un texto de instrucción.
+ * @param {string} text
+ * @returns {string}
+ */
+>>>>>>> bddc0e7 (docs: agregar JSDoc a modelos, middleware, servicios, server.js y seed.js)
 const cleanStep = (text) => text.replace(/^Step:\d+\s*/i, '');
 
+/**
+ * @description Traduce un texto de inglés a español usando diccionario,
+ *              MyMemory API o Google Translate API (con caché de 24h).
+ * @param {string} text - Texto a traducir
+ * @returns {Promise<string>}
+ */
 const translateText = async (text) => {
   if (!text || text.trim() === '') return text;
   const trimmed = cleanStep(text.trim());
@@ -585,6 +631,12 @@ const translateArray = async (arr) => {
   return Promise.all(arr.map(item => translateText(item)));
 };
 
+/**
+ * @description Traduce todos los campos de texto de un objeto ejercicio
+ *              (nombre, partes del cuerpo, equipamiento, instrucciones, etc.).
+ * @param {Object} exercise - Ejercicio desde ExerciseDB API
+ * @returns {Promise<Object>} Ejercicio con campos traducidos + raw originales
+ */
 const translateExercise = async (exercise) => {
   if (!exercise) return exercise;
 
@@ -613,11 +665,20 @@ const translateExercise = async (exercise) => {
   };
 };
 
+/**
+ * @description Traduce un array de ejercicios completos.
+ * @param {Object[]} exercises - Array de ejercicios desde ExerciseDB
+ * @returns {Promise<Object[]>}
+ */
 const translateExercises = async (exercises) => {
   if (!Array.isArray(exercises)) return exercises;
   return Promise.all(exercises.map(ex => translateExercise(ex)));
 };
 
+/**
+ * @description Limpia la caché de traducciones.
+ * @returns {void}
+ */
 const clearCache = () => cache.clear();
 
 module.exports = { translateText, translateExercise, translateExercises, clearCache };
