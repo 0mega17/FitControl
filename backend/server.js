@@ -56,19 +56,27 @@ const seedPlans = async () => {
 };
 seedPlans();
 
+<<<<<<< HEAD
 app.use('/api/auth', require('./modules/auth/rutasAuth'));
 app.use('/api/users', require('./modules/users/rutasUsuario'));
+=======
+<<<<<<< HEAD
+app.use('/api/auth', require('./modules/auth/auth.routes'));
+app.use('/api/users', require('./modules/users/users.routes'));
+=======
+app.use('/api/auth', require('./modules/auth/rutasAuth'));
+app.use('/api/users', require('./modules/users/rutasUsuario'));
+>>>>>>> feb2d3cacb88bdb9e6de5d366b67189120f75f6b
+>>>>>>> origin/main
 app.use('/api/memberships', require('./modules/memberships/memberships.routes'));
 app.use('/api/dashboard', require('./modules/dashboard/dashboard.routes'));
 app.use('/api/routines', require('./modules/routines/routines.routes'));
 app.use('/api/progress', require('./modules/progress/progress.routes'));
 app.use('/api/attendance', require('./modules/attendance/attendance.routes'));
-app.use('/api/classes', require('./modules/classes/classes.routes'));
-app.use('/api/bookings', require('./modules/bookings/bookings.routes'));
 app.use('/api/notifications', require('./modules/notifications/notifications.routes'));
 app.use('/api/calendar', require('./modules/calendar/calendar.routes'));
 app.use('/api/reports', require('./modules/reports/reports.routes'));
-app.use('/api/exercises', require('./modules/exercises/exercises.routes'));
+app.use('/api/exercises', require('./modules/exercises/rutasEjercicios'));
 app.use('/api/routine-requests', require('./modules/routineRequests/routineRequests.routes'));
 app.use('/api/plans', require('./modules/plans/plans.routes'));
 app.get('/api/public/plans', async (_req, res) => {

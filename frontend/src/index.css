@@ -70,7 +70,6 @@
 
   .gif-fit {
     image-rendering: auto;
-    -ms-interpolation-mode: bicubic;
   }
 
   .gif-glow {
