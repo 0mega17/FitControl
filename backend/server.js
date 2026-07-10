@@ -2,6 +2,8 @@
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 const Role = require('./models/Rol');
 const Plan = require('./models/Plan');
 
@@ -14,11 +16,6 @@ app.use(express.json());
 
 connectDB();
 
-/**
- * @description Siembra los roles por defecto (Administrador, Entrenador, Cliente)
- *              usando upsert para evitar duplicados.
- * @returns {Promise<void>}
- */
 const seedRoles = async () => {
   const roles = ['Administrador', 'Entrenador', 'Cliente'];
   for (const nombre of roles) {
@@ -32,11 +29,6 @@ const seedRoles = async () => {
 };
 seedRoles();
 
-/**
- * @description Siembra los planes de membresía por defecto
- *              (Básico, Estándar, Premium, Trimestral, Anual).
- * @returns {Promise<void>}
- */
 const seedPlans = async () => {
   const defaultPlans = [
     { nombre: 'Básico', precio: 70000, duracionDias: 30, beneficios: ['Acceso al gimnasio en horario regular', 'Vestidores y regaderas'], descripcion: 'Plan ideal para quienes inician', activo: true },
@@ -56,19 +48,21 @@ const seedPlans = async () => {
 };
 seedPlans();
 
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+
 app.use('/api/auth', require('./modules/auth/rutasAuth'));
 app.use('/api/users', require('./modules/users/rutasUsuario'));
-app.use('/api/memberships', require('./modules/memberships/memberships.routes'));
-app.use('/api/dashboard', require('./modules/dashboard/dashboard.routes'));
-app.use('/api/routines', require('./modules/routines/routines.routes'));
-app.use('/api/progress', require('./modules/progress/progress.routes'));
-app.use('/api/attendance', require('./modules/attendance/attendance.routes'));
+app.use('/api/memberships', require('./modules/memberships/rutasMembresia'));
+app.use('/api/dashboard', require('./modules/dashboard/rutasDashboard'));
+app.use('/api/routines', require('./modules/routines/rutasRutina'));
+app.use('/api/progress', require('./modules/progress/rutasProgreso'));
+app.use('/api/attendance', require('./modules/attendance/rutasAsistencia'));
 app.use('/api/notifications', require('./modules/notifications/notifications.routes'));
 app.use('/api/calendar', require('./modules/calendar/calendar.routes'));
 app.use('/api/reports', require('./modules/reports/reports.routes'));
 app.use('/api/exercises', require('./modules/exercises/rutasEjercicios'));
-app.use('/api/routine-requests', require('./modules/routineRequests/routineRequests.routes'));
-app.use('/api/plans', require('./modules/plans/plans.routes'));
+app.use('/api/routine-requests', require('./modules/routineRequests/rutasSolicitudRutina'));
+app.use('/api/plans', require('./modules/plans/rutasPlanes'));
 app.get('/api/public/plans', async (_req, res) => {
   try {
     const plans = await Plan.find({ activo: true }).sort({ precio: 1 });
