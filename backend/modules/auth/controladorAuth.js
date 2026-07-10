@@ -9,6 +9,11 @@ const Membership = require('../../models/Membresia');
 const MembershipHistory = require('../../models/HistorialMembresia');
 const { createNotification, notifyAllByRole } = require('../../services/servicioNotificaciones');
 
+/**
+ * @description Genera un token JWT con datos del usuario autenticado.
+ * @param {Object} usuario - Documento de usuario (debe incluir _id, nombre, email, rol)
+ * @returns {string} Token JWT firmado
+ */
 const generarToken = (usuario) => {
   return jwt.sign(
     { id: usuario._id, nombre: usuario.nombre, correo: usuario.email, rol: usuario.rol?.nombre || usuario.rol },
@@ -17,6 +22,11 @@ const generarToken = (usuario) => {
   );
 };
 
+/**
+ * @description Crea un refresh token aleatorio de 40 bytes con expiración a 7 días.
+ * @param {string} usuarioId - ObjectId del usuario
+ * @returns {Promise<string>} Token de refresco en hex
+ */
 const generarRefreshToken = async (usuarioId) => {
   const token = crypto.randomBytes(40).toString('hex');
   const expiresAt = new Date();
@@ -31,6 +41,14 @@ const generarRefreshToken = async (usuarioId) => {
   return token;
 };
 
+/**
+ * @description Formatea la respuesta de autenticación con datos del usuario,
+ *              token JWT y refresh token.
+ * @param {Object} usuario
+ * @param {string} token
+ * @param {string} refreshToken
+ * @returns {Object}
+ */
 const formatearUsuario = (usuario, token, refreshToken) => ({
   _id: usuario._id,
   nombre: usuario.nombre,
@@ -42,6 +60,14 @@ const formatearUsuario = (usuario, token, refreshToken) => ({
   refreshToken
 });
 
+/**
+ * @description Registra un nuevo usuario (cliente/entrenador) con datos de perfil,
+ *              membresía opcional y notifica al administrador.
+ * @route POST /api/auth/registro
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const registrar = async (req, res) => {
   try {
     const { nombre, apellido, email, password, objetivo, edad, estatura, peso, experiencia, planId } = req.body;
@@ -131,6 +157,14 @@ const registrar = async (req, res) => {
   }
 };
 
+/**
+ * @description Inicia sesión con email y contraseña. Retorna JWT + refresh token.
+ *              Rechaza cuentas inactivas o credenciales inválidas.
+ * @route POST /api/auth/iniciar-sesion
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const iniciarSesion = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -158,6 +192,13 @@ const iniciarSesion = async (req, res) => {
   }
 };
 
+/**
+ * @description Renueva el JWT usando un refresh token válido. Revoca el anterior.
+ * @route POST /api/auth/renovar-token
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const renovarToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
@@ -192,6 +233,13 @@ const renovarToken = async (req, res) => {
   }
 };
 
+/**
+ * @description Revoca todos los refresh tokens activos del usuario autenticado.
+ * @route POST /api/auth/cerrar-sesion
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 const cerrarSesion = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
