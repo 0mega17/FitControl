@@ -1,6 +1,6 @@
 /**
  * @module Autenticacion
- * @description Controlador de Autenticacion: registro, inicio de sesión, renovación de token y cierre de sesión.
+ * @description Controlador de Autenticacion: registro, inicio de sesiï¿½n, renovaciï¿½n de token y cierre de sesiï¿½n.
  */
 
 const jwt = require('jsonwebtoken');
@@ -65,37 +65,26 @@ const formatearUsuario = (usuario, token, refreshToken) => ({
   refreshToken
 });
 
-<<<<<<< HEAD
-/**
- * @description Registra un nuevo usuario (cliente/entrenador) con datos de perfil,
- *              membresÃ­a opcional y notifica al administrador.
- * @route POST /api/auth/registro
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
- */
-=======
 /** Registra un nuevo usuario en el sistema. */
->>>>>>> 897a290 (docs: reorganiza documentaciÃ³n JSDoc por mÃ³dulos)
 const registrar = async (req, res) => {
   try {
     const { nombre, apellido, email, password, objetivo, edad, estatura, peso, experiencia, planId } = req.body;
 
     const existeUsuario = await User.findOne({ email });
     if (existeUsuario) {
-      return res.status(400).json({ mensaje: 'El correo ya está registrado' });
+      return res.status(400).json({ mensaje: 'El correo ya estï¿½ registrado' });
     }
 
     const rol = await Role.findOne({ nombre: 'Cliente' });
     if (!rol) {
-      return res.status(400).json({ mensaje: 'Rol no válido' });
+      return res.status(400).json({ mensaje: 'Rol no vï¿½lido' });
     }
 
     if (planId) {
       const Plan = require('../../models/Plan');
       const plan = await Plan.findById(planId);
       if (!plan || !plan.activo) {
-        return res.status(400).json({ mensaje: 'El plan seleccionado no está disponible' });
+        return res.status(400).json({ mensaje: 'El plan seleccionado no estï¿½ disponible' });
       }
     }
 
@@ -166,25 +155,14 @@ const registrar = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-/**
- * @description Inicia sesiÃ³n con email y contraseÃ±a. Retorna JWT + refresh token.
- *              Rechaza cuentas inactivas o credenciales invÃ¡lidas.
- * @route POST /api/auth/iniciar-sesion
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
- */
-=======
-/** Inicia sesión con credenciales de usuario. */
->>>>>>> 897a290 (docs: reorganiza documentaciÃ³n JSDoc por mÃ³dulos)
+/** Inicia sesiï¿½n con credenciales de usuario. */
 const iniciarSesion = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const usuario = await User.findOne({ email }).populate('rol');
     if (!usuario) {
-      return res.status(400).json({ mensaje: 'Credenciales inválidas' });
+      return res.status(400).json({ mensaje: 'Credenciales invï¿½lidas' });
     }
 
     if (usuario.estado === 'inactivo') {
@@ -193,7 +171,7 @@ const iniciarSesion = async (req, res) => {
 
     const passwordValida = await usuario.compararPassword(password);
     if (!passwordValida) {
-      return res.status(400).json({ mensaje: 'Credenciales inválidas' });
+      return res.status(400).json({ mensaje: 'Credenciales invï¿½lidas' });
     }
 
     const token = generarToken(usuario);
@@ -201,21 +179,11 @@ const iniciarSesion = async (req, res) => {
 
     res.json(formatearUsuario(usuario, token, refreshToken));
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al iniciar sesión', error: error.message });
+    res.status(500).json({ mensaje: 'Error al iniciar sesiï¿½n', error: error.message });
   }
 };
 
-<<<<<<< HEAD
-/**
- * @description Renueva el JWT usando un refresh token vÃ¡lido. Revoca el anterior.
- * @route POST /api/auth/renovar-token
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
- */
-=======
 /** Renueva el token de acceso usando un refresh token. */
->>>>>>> 897a290 (docs: reorganiza documentaciÃ³n JSDoc por mÃ³dulos)
 const renovarToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
@@ -230,11 +198,11 @@ const renovarToken = async (req, res) => {
     });
 
     if (!storedToken) {
-      return res.status(401).json({ mensaje: 'Refresh token inválido' });
+      return res.status(401).json({ mensaje: 'Refresh token invï¿½lido' });
     }
 
     if (storedToken.isExpired()) {
-      return res.status(401).json({ mensaje: 'Refresh token expirado, inicie sesión nuevamente' });
+      return res.status(401).json({ mensaje: 'Refresh token expirado, inicie sesiï¿½n nuevamente' });
     }
 
     const usuario = storedToken.usuario;
@@ -250,17 +218,7 @@ const renovarToken = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-/**
- * @description Revoca todos los refresh tokens activos del usuario autenticado.
- * @route POST /api/auth/cerrar-sesion
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
- */
-=======
-/** Cierra la sesión del usuario revocando sus refresh tokens. */
->>>>>>> 897a290 (docs: reorganiza documentaciÃ³n JSDoc por mÃ³dulos)
+/** Cierra la sesiï¿½n del usuario revocando sus refresh tokens. */
 const cerrarSesion = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
@@ -269,9 +227,9 @@ const cerrarSesion = async (req, res) => {
       await RefreshToken.updateMany({ usuario: req.user._id, revoked: false }, { revoked: true });
     }
 
-    res.json({ mensaje: 'Sesión cerrada correctamente' });
+    res.json({ mensaje: 'Sesiï¿½n cerrada correctamente' });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al cerrar sesión', error: error.message });
+    res.status(500).json({ mensaje: 'Error al cerrar sesiï¿½n', error: error.message });
   }
 };
 
