@@ -110,13 +110,13 @@ function ExerciseCatalog() {
           <Select value={bodyPart} onChange={(e) => { setBodyPart(e.target.value); setHistory([]); setCursor(null) }}>
             <option value="">Parte del cuerpo</option>
             {bodyParts.map((bp) => (
-              <option key={bp} value={bp}>{bp}</option>
+              <option key={bp.original || bp} value={bp.original || bp}>{bp.traducido || bp.original || bp}</option>
             ))}
           </Select>
           <Select value={targetMuscle} onChange={(e) => { setTargetMuscle(e.target.value); setHistory([]); setCursor(null) }}>
             <option value="">Músculo objetivo</option>
             {targets.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t.original || t} value={t.original || t}>{t.traducido || t.original || t}</option>
             ))}
           </Select>
           <Select value={equipment} onChange={(e) => { setEquipment(e.target.value); setHistory([]); setCursor(null) }}>

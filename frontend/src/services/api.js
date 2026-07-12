@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL,
   headers: { 'Content-Type': 'application/json' }
 })
 
@@ -16,113 +16,113 @@ api.interceptors.response.use(
 )
 
 export const authAPI = {
-  login: (data) => api.post('/auth/login', data),
-  register: (data) => api.post('/auth/register', data),
-  profile: () => api.get('/auth/perfil'),
+  login: (data) => api.post('/auth/iniciar-sesion', data),
+  register: (data) => api.post('/auth/registro', data),
+  profile: () => api.get('/users/perfil'),
 }
 
 export const usersAPI = {
-  getAll: () => api.get('/usuarios'),
-  getByRole: (role) => api.get(`/usuarios/rol/${role}`),
-  toggleActive: (id) => api.patch(`/usuarios/${id}/toggle-activo`),
-  updateRole: (id, data) => api.put(`/usuarios/${id}/rol`, data),
-  getTrainers: () => api.get('/usuarios/entrenadores'),
-  getProfile: () => api.get('/auth/perfil'),
-  updateProfile: (data) => api.put('/usuarios/perfil', data),
-  deactivate: (id) => api.patch(`/usuarios/${id}/toggle-activo`),
-  activate: (id) => api.patch(`/usuarios/${id}/toggle-activo`),
-  updateUser: (id, data) => api.put(`/usuarios/${id}`, data),
+  getAll: (params) => api.get('/users/lista', { params }),
+  getByRole: (role) => api.get('/users/lista', { params: { rol: role } }),
+  toggleActive: (id) => api.put(`/users/${id}/desactivar`),
+  updateRole: (id, data) => api.put(`/users/${id}/rol`, data),
+  getTrainers: () => api.get('/users/lista', { params: { rol: 'Entrenador' } }),
+  getProfile: () => api.get('/users/perfil'),
+  updateProfile: (data) => api.put('/users/perfil', data),
+  deactivate: (id) => api.put(`/users/${id}/desactivar`),
+  activate: (id) => api.put(`/users/${id}/activar`),
+  updateUser: (id, data) => api.put(`/users/${id}`, data),
 }
 
 export const membershipsAPI = {
-  getSemaforo: () => api.get('/membresias/semaforo'),
-  getPrices: () => api.get('/membresias/precios'),
-  updatePrices: (data) => api.put('/membresias/precios', data),
-  create: (data) => api.post('/membresias', data),
-  renew: (id, data) => api.post(`/membresias/${id}/renovar`, data),
-  cancel: (id) => api.post(`/membresias/${id}/cancelar`),
-  getMy: () => api.get('/membresias/mi-membresia'),
-  getMyPlan: () => api.get('/membresias/mi-plan'),
-  getMyPlanEnhanced: () => api.get('/membresias/mi-plan'),
-  changePlan: (data) => api.put('/membresias/cambiar-plan', data),
+  getSemaforo: () => api.get('/memberships/semaforo'),
+  getPrices: () => api.get('/memberships/prices'),
+  updatePrices: (data) => api.put('/memberships/prices', data),
+  create: (data) => api.post('/memberships', data),
+  renew: (id, data) => api.put(`/memberships/${id}/renew`, data),
+  cancel: (id) => api.put(`/memberships/${id}/cancel`),
+  getMy: () => api.get('/memberships/my'),
+  getMyPlan: () => api.get('/memberships/my-plan'),
+  getMyPlanEnhanced: () => api.get('/memberships/my-plan-enhanced'),
+  changePlan: (data) => api.put('/memberships/change-plan', data),
 }
 
 export const plansAPI = {
-  getPublic: () => api.get('/planes/publicos'),
-  getAll: () => api.get('/planes'),
-  create: (data) => api.post('/planes', data),
-  update: (id, data) => api.put(`/planes/${id}`, data),
-  remove: (id) => api.delete(`/planes/${id}`),
+  getPublic: () => api.get('/public/plans'),
+  getAll: () => api.get('/plans'),
+  create: (data) => api.post('/plans', data),
+  update: (id, data) => api.put(`/plans/${id}`, data),
+  remove: (id) => api.delete(`/plans/${id}`),
 }
 
 export const routinesAPI = {
-  getAll: () => api.get('/rutinas'),
-  getById: (id) => api.get(`/rutinas/${id}`),
-  create: (data) => api.post('/rutinas', data),
-  update: (id, data) => api.put(`/rutinas/${id}`, data),
-  remove: (id) => api.delete(`/rutinas/${id}`),
-  assign: (id, data) => api.post(`/rutinas/${id}/asignar`, data),
-  listClients: () => api.get('/rutinas/clientes'),
-  getMyRoutine: () => api.get('/rutinas/mi-rutina'),
+  getAll: () => api.get('/routines'),
+  getById: (id) => api.get(`/routines/${id}`),
+  create: (data) => api.post('/routines', data),
+  update: (id, data) => api.put(`/routines/${id}`, data),
+  remove: (id) => api.delete(`/routines/${id}`),
+  assign: (id, data) => api.post(`/routines/${id}/assign`, data),
+  listClients: () => api.get('/routines/clientes/lista'),
+  getMyRoutine: () => api.get('/routines/mi-rutina'),
 }
 
 export const routineRequestsAPI = {
-  create: (data) => api.post('/solicitudes-rutina', data),
-  getMy: () => api.get('/solicitudes-rutina/mias'),
-  getAll: () => api.get('/solicitudes-rutina'),
-  respond: (id, data) => api.put(`/solicitudes-rutina/${id}/responder`, data),
-  approve: (id) => api.put(`/solicitudes-rutina/${id}/aprobar`),
-  reject: (id, motivo) => api.put(`/solicitudes-rutina/${id}/rechazar`, { motivo }),
+  create: (data) => api.post('/routine-requests', data),
+  getMy: () => api.get('/routine-requests/mis'),
+  getAll: () => api.get('/routine-requests'),
+  respond: (id, data) => api.put(`/routine-requests/${id}/responder`, data),
+  approve: (id) => api.put(`/routine-requests/${id}/approve`),
+  reject: (id, motivo) => api.put(`/routine-requests/${id}/reject`, { motivo }),
   assignRoutine: (requestId, rutinaId) =>
-    api.post(`/solicitudes-rutina/${requestId}/asignar-rutina`, { rutinaId }),
+    api.post(`/routine-requests/${requestId}/assign-routine`, { rutinaId }),
 }
 
 export const attendanceAPI = {
-  getToday: () => api.get('/asistencia/hoy'),
-  register: (data) => api.post('/asistencia', data),
-  getByDate: (date) => api.get(`/asistencia/fecha/${date}`),
-  getAll: (fecha) => api.get(`/asistencia/fecha/${fecha}`),
-  getStats: () => api.get('/asistencia/estadisticas'),
-  generateQR: () => api.get('/asistencia/generar-qr'),
-  registerByQR: (qrData) => api.post('/asistencia/registrar-qr', { qrData }),
+  getToday: () => api.get('/attendance', { params: { fecha: new Date().toISOString().slice(0, 10) } }),
+  register: (data) => api.post('/attendance/qr', data),
+  getByDate: (date) => api.get('/attendance', { params: { fecha: date } }),
+  getAll: (fecha) => api.get('/attendance', { params: { fecha } }),
+  getStats: () => api.get('/attendance'),
+  generateQR: () => api.get('/attendance/qr'),
+  registerByQR: (qrData) => api.post('/attendance/qr', { qrData }),
 }
 
 export const notificationsAPI = {
-  getMy: () => api.get('/notificaciones'),
-  markRead: (id) => api.patch(`/notificaciones/${id}/leida`),
-  markAllRead: () => api.patch('/notificaciones/leidas-todas'),
-  markAsRead: (id) => api.patch(`/notificaciones/${id}/leida`),
-  markAllAsRead: () => api.patch('/notificaciones/leidas-todas'),
-  getUnreadCount: () => api.get('/notificaciones/no-leidas'),
+  getMy: () => api.get('/notifications/my'),
+  markRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/read-all'),
+  markAsRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: () => api.put('/notifications/read-all'),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
 }
 
 export const exercisesAPI = {
-  getAll: () => api.get('/ejercicios'),
-  getById: (id) => api.get(`/ejercicios/${id}`),
-  getByMuscle: (muscle) => api.get(`/ejercicios/musculo/${muscle}`),
-  getBodyParts: () => api.get('/ejercicios/body-parts'),
-  getTargetMuscles: () => api.get('/ejercicios/target-muscles'),
-  getEquipment: () => api.get('/ejercicios/equipment'),
+  getAll: (params) => api.get('/exercises', { params }),
+  getById: (id) => api.get(`/exercises/${id}`),
+  getByMuscle: (muscle) => api.get('/exercises', { params: { targetMuscle: muscle } }),
+  getBodyParts: () => api.get('/exercises/body-parts'),
+  getTargetMuscles: () => api.get('/exercises/target-muscles'),
+  getEquipment: () => api.get('/exercises/equipment'),
 }
 
 export const calendarAPI = {
-  getEvents: () => api.get('/eventos'),
-  getAll: () => api.get('/eventos'),
-  create: (data) => api.post('/eventos', data),
-  remove: (id) => api.delete(`/eventos/${id}`),
+  getEvents: (params) => api.get('/calendar', { params }),
+  getAll: (params) => api.get('/calendar', { params }),
+  create: (data) => api.post('/calendar', data),
+  remove: (id) => api.delete(`/calendar/${id}`),
 }
 
 export const reportsAPI = {
-  getDashboard: () => api.get('/reportes/dashboard'),
-  get: (params) => api.get('/reportes', { params }),
+  getDashboard: () => api.get('/reports/dashboard'),
+  get: (params) => api.get('/reports', { params }),
 }
 
 export const progressAPI = {
-  getMy: () => api.get('/progreso/mi-progreso'),
-  create: (data) => api.post('/progreso', data),
-  getAll: () => api.get('/progreso'),
-  remove: (id) => api.delete(`/progreso/${id}`),
-  getLast: () => api.get('/progreso/ultimo'),
+  getMy: () => api.get('/progress'),
+  create: (data) => api.post('/progress', data),
+  getAll: () => api.get('/progress'),
+  remove: (id) => api.delete(`/progress/${id}`),
+  getLast: () => api.get('/progress/last'),
 }
 
 export default api

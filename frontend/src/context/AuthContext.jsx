@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
     if (!token) { setLoading(false); return }
     setAuthToken(token)
     try {
-      const { data } = await api.get('/auth/perfil')
+      const { data } = await api.get('/users/perfil')
       setUser(data)
     } catch {
       setAuthToken(null)
@@ -34,16 +34,18 @@ export function AuthProvider({ children }) {
   useEffect(() => { fetchUser() }, [fetchUser])
 
   const login = async (email, password) => {
-    const { data } = await api.post('/auth/login', { email, password })
+    const { data } = await api.post('/auth/iniciar-sesion', { email, password })
     setAuthToken(data.token)
-    setUser(data.usuario)
+    const { token, refreshToken, ...userData } = data
+    setUser(userData)
     return data
   }
 
   const register = async (userData) => {
-    const { data } = await api.post('/auth/register', userData)
+    const { data } = await api.post('/auth/registro', userData)
     setAuthToken(data.token)
-    setUser(data.usuario)
+    const { token: jwt, refreshToken, ...user } = data
+    setUser(user)
     return data
   }
 
